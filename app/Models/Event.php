@@ -17,4 +17,14 @@ class Event extends Model
         'location',
         'company_id',
     ];
+
+    public function employer()
+    {
+        return $this->belongsTo(User::class, 'employer_id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'event_id');
+    }
 }

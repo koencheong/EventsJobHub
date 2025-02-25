@@ -18,10 +18,13 @@
                         :active="false">
                         {{ __('Home') }}
                     </x-nav-link>
-                    @endauth
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    
+                    <x-nav-link 
+                        href="{{ Auth::user()->role == 'employer' ? route('dashboard') : route('part-timers.dashboard') }}" 
+                        :active="request()->routeIs(Auth::user()->role == 'part_timer' ? 'part-timers.dashboard' : 'dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
