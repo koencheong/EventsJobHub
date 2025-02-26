@@ -16,6 +16,7 @@ class Event extends Model
         'date',
         'location',
         'company_id',
+        'payment_amount',
     ];
 
     public function employer()

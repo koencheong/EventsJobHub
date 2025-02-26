@@ -48,6 +48,8 @@
                                     <p class="text-gray-600 mt-2">Job Type: {{ $event->job_type }}</p>
                                     <p class="text-gray-600 mt-2">Location: {{ $event->location }}</p>
                                     <p class="text-gray-600 mt-2">Date: {{ \Carbon\Carbon::parse($event->date)->format('F j, Y') }}</p>
+                                    <p class="text-gray-600 mt-2">Payment Rate: RM {{ $event->payment_amount }}</p>
+
 
                                     <!-- Button to open modal with the event's ID -->
                                     <div class="mt-4">
@@ -73,6 +75,7 @@
             <p id="eventModalLocation" class="text-gray-600 mt-2"></p>
             <p id="eventModalDate" class="text-gray-600 mt-2"></p>
             <p id="eventModalDescription" class="text-gray-600 mt-4"></p>
+            <p id="eventModalPayment" class="text-gray-600 mt-2"></p>
 
             <!-- Modal buttons -->
             <div class="flex justify-between mt-6">
@@ -112,6 +115,7 @@
                 document.getElementById('eventModalLocation').innerText = "Location: " + eventData.location;
                 document.getElementById('eventModalDate').innerText = "Date: " + new Date(eventData.date).toLocaleDateString();
                 document.getElementById('eventModalDescription').innerText = eventData.description;
+                document.getElementById('eventModalPayment').innerText = "Payment Rate: RM " + eventData.payment_amount + " per hour";
                 document.getElementById('eventModal').classList.remove('hidden');
 
                 // Set the apply button event

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PartTimerPortfolioController;
 
 // Dashboard Route (Authenticated Users)
 Route::middleware([
@@ -52,4 +53,11 @@ Route::middleware(['auth'])->group(function () {
 // Default Fallback (If User Tries /home)
 Route::get('/home', function () {
     return redirect()->route('redirect');
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/part-timers/portfolio/{id}', [PartTimerPortfolioController::class, 'show'])->name('portfolio.show');
+    Route::get('/part-timers/portfolios/edit', [PartTimerPortfolioController::class, 'edit'])->name('portfolio.edit');
+    Route::post('/part-timers/portfolios/update', [PartTimerPortfolioController::class, 'update'])->name('portfolio.update');
 });

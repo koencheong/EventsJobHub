@@ -57,6 +57,15 @@
                             @enderror
                         </div>
 
+                        <!-- Payment Rate -->
+                        <div class="flex flex-col">
+                            <label for="payment_amount" class="text-lg font-semibold text-gray-800">Payment Amount (RM)</label>
+                            <input type="number" id="payment_amount" name="payment_amount" class="mt-2 p-2 border border-gray-300 rounded" step="0.01" value="{{ old('payment_amount') }}" required>
+                            @error('payment_amount')
+                                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="flex items-center justify-between mt-6">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

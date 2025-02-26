@@ -35,6 +35,7 @@
                                 <td class="py-2 px-4 border-b">{{ $event->job_type }}</td>
                                 <td class="py-2 px-4 border-b">{{ $event->location }}</td>
                                 <td class="py-2 px-4 border-b">{{ $event->date }}</td>
+                                <td class="py-2 px-4 border-b">{{ $event->payment_amount }}</td>
                                 <td class="py-2 px-4 border-b">
                                     <a href="{{ route('events.edit', $event) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
                                     <form action="{{ route('events.destroy', $event) }}" method="POST" class="inline-block">

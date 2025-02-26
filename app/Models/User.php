@@ -75,5 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(JobApplication::class, 'user_id');
     }
+    
+    public function isPartTimer()
+    {
+        return $this->role === 'part_timer';
+    }
+
 
 }

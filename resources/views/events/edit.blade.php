@@ -42,6 +42,14 @@
                         <textarea id="description" name="description" class="w-full p-3 border border-gray-300 rounded-md">{{ old('description', $event->description) }}</textarea>
                     </div>
 
+                    <div class="flex flex-col">
+                        <label for="payment_amount" class="text-lg font-semibold text-gray-800">Payment Rate (RM/hour)</label>
+                        <input type="number" id="payment_amount" name="payment_amount" class="mt-2 p-2 border border-gray-300 rounded" step="0.01" value="{{ old('payment_amount', $event->payment_amount) }}" required>
+                        @error('payment_amount')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
                         Save Changes
                     </button>

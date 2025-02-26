@@ -4,7 +4,7 @@
             {{ __('My Job Applications') }}
         </h2>
     </x-slot>
-
+    
     <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl sm:rounded-lg p-8 rounded-xl overflow-hidden">

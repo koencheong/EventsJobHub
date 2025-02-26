@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Models\PartTimerPortfolio;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -23,16 +24,26 @@ class CreateNewUser implements CreatesNewUsers
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
-            'role' => ['required', 'string'], // Part-timer or employer
+            'role' => ['required', 'string'], // Ensure 'part-timer' or 'employer'
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
-        return User::create([
+        // Create the user
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'role' => $input['role'],
         ]);
-    }
 
+        // If the user is a part-timer, create a default portfolio
+        if ($user->role === 'part-timer') {
+            PartTimerPortfolio::create([
+                'user_id' => $user->id,
+                'full_name' => $user->name, // Default to their name
+            ]);
+        }
+
+        return $user;
+    }
 }

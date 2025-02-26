@@ -53,16 +53,19 @@ class EventController extends Controller
             'description' => 'required|string',
             'date' => 'required|date',
             'location' => 'required|string',
+            'payment_amount' => 'required|numeric|min:0',
         ]);
-
+        
         Event::create([
             'name' => $request->name,
             'job_type' => $request->job_type,
             'description' => $request->description,
             'date' => $request->date,
             'location' => $request->location,
-            'company_id' => auth()->id(), // Assuming only logged-in employers can post
+            'payment_amount' => $request->payment_amount,
+            'company_id' => auth()->id(),
         ]);
+        
 
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
@@ -94,7 +97,9 @@ class EventController extends Controller
             'description' => 'required|string',
             'date' => 'required|date',
             'location' => 'required|string',
+            'payment_amount' => 'required|numeric|min:0',
         ]);
+        
 
         $event->update($request->all());
 
