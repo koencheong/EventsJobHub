@@ -25,12 +25,12 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <!-- Show Portfolio Link Only for Part-Timers -->
+                    <!-- Show Profile Link Only for Part-Timers -->
                     @if(Auth::user()->role == 'part-timer')
                         <x-nav-link 
-                            href="{{ route('portfolio.show', Auth::id()) }}" 
-                            :active="request()->routeIs('portfolio.show') || request()->routeIs('portfolio.edit')">
-                            {{ __('Portfolio') }}
+                            href="{{ route('public-profile.show', Auth::id()) }}" 
+                            :active="request()->routeIs('public-profile.show') || request()->routeIs('profile.edit')">
+                            {{ __('Profile') }}
                         </x-nav-link>
                     @endif
                     @endauth
@@ -70,7 +70,7 @@
                                 </div>
 
                                 <x-dropdown-link href="{{ route('profile.show') }}">
-                                    {{ __('Profile') }}
+                                    {{ __('Account Settings') }}
                                 </x-dropdown-link>
 
                                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())

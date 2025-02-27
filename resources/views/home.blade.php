@@ -1,59 +1,56 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
-            {{ __('Home') }}
-        </h2>
-    </x-slot>
+    <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 text-black py-16 text-center">
+        <h1 class="text-5xl font-bold">Welcome to Events Job Hub</h1>
+        <p class="text-lg mt-4 max-w-2xl mx-auto">Find the perfect part-time event jobs with ease and start earning today!</p>
+        
+        <!-- Search Form -->
+        <div class="mt-6 max-w-lg mx-auto">
+            <form method="GET" action="{{ route('home') }}" class="flex bg-white rounded-full shadow-lg p-2">
+                <input type="text" name="search" class="w-full p-3 text-gray-800 border-none focus:ring-0 focus:outline-none rounded-l-full" placeholder="Search for events..." value="{{ request()->get('search') }}">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-r-full transition duration-300">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
 
-    <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-xl sm:rounded-lg p-8 rounded-xl overflow-hidden">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-4">Welcome to Events Job Hub</h1>
-                <p class="text-lg text-gray-600 mb-6">Find the perfect part-time event jobs with ease and start earning today!</p>
-
-                <!-- Show login/register prompt for guests -->
-                @guest
-                    <div class="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg mb-6">
-                        <p class="text-lg font-semibold">Join us to apply for event jobs!</p>
-                        <div class="mt-2">
-                            <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 transition duration-300">Register</a> 
-                            or 
-                            <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-800 transition duration-300">Login</a> 
-                            to apply.
-                        </div>
-                    </div>
-                @endguest
-
-                <!-- Search Form -->
-                <div class="mb-8">
-                    <form method="GET" action="{{ route('home') }}" class="flex items-center space-x-4 bg-white rounded-lg shadow-md p-4">
-                        <input type="text" name="search" class="w-full p-3 border border-gray-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search for events..." value="{{ request()->get('search') }}">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded transition duration-300 ease-in-out">
-                            Search
-                        </button>
+    <!-- Main Content -->
+    <div class="py-12 bg-gray-100">
+        <div class="max-w-8xl mx-auto px-10">
+            <div class="bg-gray-50 p-10 shadow-xl rounded-xl flex gap-10">
+                <!-- Filtering Sidebar -->
+                <div class="w-1/4 bg-white p-6 shadow-lg rounded-xl border border-gray-200">
+                    <h3 class="text-xl font-bold mb-4">Filter Jobs</h3>
+                    <form method="GET" action="{{ route('home') }}">
+                        <label class="block text-gray-700 font-semibold">Job Type</label>
+                        <select name="job_type" class="w-full p-2 border rounded-lg mb-5">
+                            <option value="">All</option>
+                            <option value="Cashier">Cashier</option>
+                            <option value="Promoter">Promoter</option>
+                        </select>
+                        <label class="block text-gray-700 font-semibold">Payment Range (RM)</label>
+                        <input type="number" name="min_payment" class="w-full p-2 border rounded-lg mb-2" placeholder="Min">
+                        <input type="number" name="max_payment" class="w-full p-2 border rounded-lg mb-5" placeholder="Max">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg w-full">Apply Filters</button>
                     </form>
                 </div>
 
-                <!-- Display events for part-timers -->
-                <div>
-                    <!-- Check if events are available -->
+                <!-- Event Listings -->
+                <div class="w-3/4">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
                     @if(isset($events) && $events->isEmpty())
-                        <p class="text-gray-600 text-lg font-medium">No upcoming events at the moment. Check back later!</p>
+                        <p class="text-center text-gray-600 text-lg">No upcoming events at the moment. Check back later!</p>
                     @else
-                        <!-- Use a grid layout to display events in 3 columns -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             @foreach ($events as $event)
-                                <div class="bg-white shadow-lg rounded-lg p-6 hover:shadow-2xl transition duration-300 ease-in-out">
+                                <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6">
                                     <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
-                                    <p class="text-gray-600 mt-2">Job Type: {{ $event->job_type }}</p>
-                                    <p class="text-gray-600 mt-2">Location: {{ $event->location }}</p>
-                                    <p class="text-gray-600 mt-2">Date: {{ \Carbon\Carbon::parse($event->date)->format('F j, Y') }}</p>
-                                    <p class="text-gray-600 mt-2">Payment Rate: RM {{ $event->payment_amount }}</p>
-
-
-                                    <!-- Button to open modal with the event's ID -->
+                                    <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type }}</p>
+                                    <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
+                                    <p class="text-gray-600 mt-2"><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->date)->format('F j, Y') }}</p>
+                                    <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
                                     <div class="mt-4">
-                                        <button type="button" class="text-blue-600 hover:text-blue-800 transition duration-300" onclick="openModal({{ $event->id }})">
+                                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300" onclick="openModal({{ $event->id }})">
                                             View Details
                                         </button>
                                     </div>
@@ -125,9 +122,39 @@
             }
         }
 
-        // Function to apply for a job
+        // Function to apply for a job with confirmation
         function applyForJob(eventId) {
-        if (isPartTimer) {
+            if (!isPartTimer) {
+                alert('You must be logged in as a part-timer to apply.');
+                return;
+            }
+
+            // Check if the user has already applied
+            fetch(`/check-application/${eventId}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.alreadyApplied) {
+                    alert('You have already applied for this job.');
+                } else {
+                    // Confirm before applying
+                    if (confirm('Are you sure you want to apply for this job?')) {
+                        submitApplication(eventId);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while checking your application status.');
+            });
+        }
+
+        // Function to submit the application
+        function submitApplication(eventId) {
             fetch(`/apply/${eventId}`, {
                 method: 'POST',
                 headers: {
@@ -143,21 +170,15 @@
                 return response.json();
             })
             .then(data => {
-                if (data.message === 'Application successful!') {
-                    alert('You have successfully applied for this job!');
-                    closeModal();
-                } else {
-                    alert(data.message);
-                }
+                alert(data.message);
+                closeModal();
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred. Please try again.');
             });
-        } else {
-            alert('You must be logged in as a part-timer to apply.');
         }
-    }
+
 
     </script>
 </x-app-layout>

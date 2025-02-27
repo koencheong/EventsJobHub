@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PartTimerPortfolio extends Model
+class PartTimerProfile extends Model
 {
     protected $fillable = ['user_id', 'full_name', 'phone', 'location', 'bio', 'work_experience', 'work_photos'];
     
-    public function partTimerPortfolio()
+    protected $casts = [
+        'work_photos' => 'array',
+    ];
+    
+    public function partTimerProfile()
     {
-        return $this->hasOne(PartTimerPortfolio::class, 'user_id');
+        return $this->hasOne(PartTimerProfile::class, 'user_id');
     }
 
 }

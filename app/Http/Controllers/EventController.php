@@ -18,18 +18,33 @@ class EventController extends Controller
 
     public function showEventsForPartTimers(Request $request)
     {
-        // Get the search query from the request
-        $search = $request->get('search');
+        $query = Event::query();
 
-        // Fetch events with optional search functionality
-        if ($search) {
-            $events = Event::where('name', 'like', '%' . $search . '%')
-                            ->orWhere('location', 'like', '%' . $search . '%')
-                            ->orWhere('job_type', 'like', '%' . $search . '%')
-                            ->get();
-        } else {
-            $events = Event::all();
+        // Search by event name, location, or job type
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('location', 'like', '%' . $request->search . '%')
+                ->orWhere('job_type', 'like', '%' . $request->search . '%');
+            });
         }
+
+        // Filter by Job Type (e.g., Cashier, Promoter, etc.)
+        if ($request->has('job_type') && $request->job_type != '') {
+            $query->where('job_type', $request->job_type);
+        }
+
+        // Filter by Payment Range
+        if ($request->has('min_payment') && is_numeric($request->min_payment)) {
+            $query->where('payment_amount', '>=', $request->min_payment);
+        }
+
+        if ($request->has('max_payment') && is_numeric($request->max_payment)) {
+            $query->where('payment_amount', '<=', $request->max_payment);
+        }
+
+        // Fetch the filtered events
+        $events = $query->get();
 
         return view('home', compact('events'));
     }

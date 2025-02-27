@@ -44,12 +44,65 @@ class JobApplicationController extends Controller
     {
         $userId = Auth::id(); // Get logged-in part-timer's ID
 
-        // Fetch applications with related event details using 'user_id'
+        // Fetch applications with related event details
         $applications = JobApplication::with('event')
                         ->where('user_id', $userId)
                         ->get();
 
-        return view('part-timers.dashboard', compact('applications'));
+        // Count completed and upcoming jobs
+        $completedJobs = JobApplication::where('user_id', $userId)
+                        ->where('status', 'completed')
+                        ->count();
+
+        $upcomingJobs = JobApplication::where('user_id', $userId)
+                        ->where('status', 'approved')
+                        ->count();
+
+        // Calculate total earnings (only from 'paid' applications)
+        $totalEarnings = JobApplication::where('job_applications.user_id', $userId)
+                        ->where('job_applications.status', 'paid')
+                        ->join('events', 'job_applications.event_id', '=', 'events.id')
+                        ->whereMonth('job_applications.updated_at', now()->month)
+                        ->sum('events.payment_amount'); // Fetch from the events table
+
+        // Earnings data for Chart.js (grouped by date)
+        $earningsData = JobApplication::where('job_applications.user_id', $userId)
+                ->where('job_applications.status', 'paid')
+                ->join('events', 'job_applications.event_id', '=', 'events.id')
+                ->whereMonth('job_applications.updated_at', now()->month)
+                ->selectRaw('DATE(job_applications.updated_at) as date, SUM(events.payment_amount) as total')
+                ->groupBy('job_applications.updated_at') // Ensure grouping is consistent
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'date' => $item->date,
+                        'total' => $item->total,
+                    ];
+                });
+
+        return view('part-timers.dashboard', compact('applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData'));
     }
+
+    public function cancel($id)
+    {
+        $application = JobApplication::findOrFail($id);
+
+        if ($application->status === 'pending') {
+            $application->update(['status' => 'canceled']);
+        }
+
+        return redirect()->back()->with('success', 'Application canceled successfully.');
+    }
+
+    public function checkApplication($eventId)
+    {
+        $user = auth()->user();
+        $alreadyApplied = JobApplication::where('event_id', $eventId)
+                                        ->where('user_id', $user->id)
+                                        ->exists();
+
+        return response()->json(['alreadyApplied' => $alreadyApplied]);
+    }
+
 
 }

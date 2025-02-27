@@ -81,5 +81,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'part_timer';
     }
 
+    public function profile()
+    {
+        return $this->hasOne(PartTimerProfile::class);
+    }
+
+
 
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up()
     {
-        Schema::create('part_timer_portfolios', function (Blueprint $table) {
+        Schema::create('part_timer_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('full_name');
@@ -20,9 +20,9 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-
+    
     public function down()
     {
-        Schema::dropIfExists('part_timer_portfolios');
+        Schema::dropIfExists('part_timer_profiles');
     }
 };
