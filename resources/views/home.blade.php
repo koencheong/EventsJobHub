@@ -71,8 +71,8 @@
             <p id="eventModalJobType" class="text-gray-600 mt-2"></p>
             <p id="eventModalLocation" class="text-gray-600 mt-2"></p>
             <p id="eventModalDate" class="text-gray-600 mt-2"></p>
-            <p id="eventModalDescription" class="text-gray-600 mt-4"></p>
             <p id="eventModalPayment" class="text-gray-600 mt-2"></p>
+            <p id="eventModalDescription" class="text-gray-600 mt-4"></p>
 
             <!-- Modal buttons -->
             <div class="flex justify-between mt-6">

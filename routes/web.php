@@ -63,3 +63,23 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/check-application/{eventId}', [JobApplicationController::class, 'checkApplication']);
+
+Route::get('/employer/jobs', [JobApplicationController::class, 'listJobs'])
+    ->middleware(['auth'])
+    ->name('employer.jobs');
+
+Route::get('/employer/jobs/{job}/applications', [JobApplicationController::class, 'viewApplications'])
+    ->middleware(['auth'])
+    ->name('employer.jobs.applications');
+
+Route::get('/part-timers/{id}', [PartTimerProfileController::class, 'show'])
+    ->middleware(['auth'])
+    ->name('part-timers.show');
+
+Route::patch('/applications/{application}', [JobApplicationController::class, 'updateStatus'])
+    ->middleware(['auth'])
+    ->name('application.update');
+    
+Route::get('/employers/applicants/{id}', [JobApplicationController::class, 'viewApplicant'])
+    ->middleware(['auth'])
+    ->name('employers.viewApplicant');

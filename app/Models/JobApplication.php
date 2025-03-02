@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Event;
+use App\Models\JobApplication;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -26,4 +29,5 @@ class JobApplication extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
 }

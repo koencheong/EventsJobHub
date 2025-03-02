@@ -33,6 +33,15 @@
                             {{ __('Profile') }}
                         </x-nav-link>
                     @endif
+
+                    @if(Auth::user()->role == 'employer')
+                        <x-nav-link 
+                            href="{{ route('employer.jobs') }}" 
+                            :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
+                            {{ __('Job Applications') }}
+                        </x-nav-link>
+                    @endif
+
                     @endauth
                 </div>
             </div>
@@ -40,10 +49,11 @@
                <!-- Settings Dropdown or Guest Links -->
             <div class="ms-3 relative">
                     @guest
-                        <div class="flex space-x-4">
-                            <a href="{{ route('login') }}" class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md transition">Login</a>
-                            <a href="{{ route('register') }}" class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-md transition">Register</a>
-                        </div>
+                    <div class="flex items-center justify-center gap-4 py-4">
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md transition">Login</a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-md transition">Register</a>
+                    </div>
+
                     @else
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">

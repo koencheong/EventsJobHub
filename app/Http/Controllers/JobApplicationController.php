@@ -71,7 +71,7 @@ class JobApplicationController extends Controller
                 ->join('events', 'job_applications.event_id', '=', 'events.id')
                 ->whereMonth('job_applications.updated_at', now()->month)
                 ->selectRaw('DATE(job_applications.updated_at) as date, SUM(events.payment_amount) as total')
-                ->groupBy('job_applications.updated_at') // Ensure grouping is consistent
+                ->groupBy('job_applications.updated_at')
                 ->get()
                 ->map(function ($item) {
                     return [
@@ -104,5 +104,70 @@ class JobApplicationController extends Controller
         return response()->json(['alreadyApplied' => $alreadyApplied]);
     }
 
+    // Employer
+    public function listJobs()
+    {
+        if (auth()->user()->role !== 'employer') {
+            abort(403, 'Unauthorized');
+        }
+        
+        $jobs = Event::where('company_id', auth()->id())->get();
+        return view('employers.jobs', compact('jobs'));
+    }
+
+
+    public function viewApplications(Event $job)
+    {
+        $applications = JobApplication::where('event_id', $job->id)
+                        ->where('status', '!=', 'canceled')
+                        ->with('user')
+                        ->get();
+        
+        return view('employers.job_applications', compact('job', 'applications'));
+    }
+
+    public function viewApplicant($id)
+    {
+        $employer = auth()->user();
+        
+        if ($employer->role !== 'employer') {
+            abort(403, 'Unauthorized');
+        }
+    
+        // Ensure the part-timer applied for a job posted by this employer
+        $application = JobApplication::where('user_id', $id)
+            ->whereHas('event', function ($query) use ($employer) {
+                $query->where('company_id', $employer->id);
+            })
+            ->with('user.partTimerProfile') // Load the profile details
+            ->first();
+    
+        if (!$application) {
+            abort(403, 'Unauthorized');
+        }
+    
+        // Ensure we get the part-timer profile
+        $partTimerProfile = $application->user->partTimerProfile ?? null;
+    
+        return view('employers.view_applicant', ['partTimer' => $partTimerProfile]);
+    }    
+    
+    public function updateStatus(Request $request, JobApplication $application)
+    {
+        if (auth()->user()->role !== 'employer') {
+            abort(403, 'Unauthorized');
+        }
+
+        // Ensure the job belongs to the logged-in employer
+        if ($application->event->company_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Validate and update status
+        $request->validate(['status' => 'required|in:pending,accepted,rejected']);
+        $application->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Application status updated successfully.');
+    }
 
 }

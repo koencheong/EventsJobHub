@@ -5,3 +5,10 @@
 [x-cloak] {
     display: none;
 }
+
+/* .button-primary {
+    @apply bg-red-500 hover:bg-red-600;
+    @apply text-white rounded-md p-8 m-8 shadow-md w-full;
+    @apply transition-all duration-200;
+    @apply hover:scale-105
+} */
