@@ -12,8 +12,14 @@
             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <p><strong>Title:</strong> {{ $job->name }}</p>
                 <p><strong>Location:</strong> {{ $job->location }}</p>
-                <p><strong>Date:</strong> {{ $job->date }}</p>
-                <p><strong>Payment Amount:</strong> RM{{ number_format($job->payment_amount, 2) }}</p>
+                <p><strong>Date:</strong> 
+                @if ($job->start_date == $job->end_date)
+                    {{ \Carbon\Carbon::parse($job->start_date)->format('F j, Y') }}
+                @else
+                    {{ \Carbon\Carbon::parse($job->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($job->end_date)->format('F j, Y') }}
+                @endif
+                </p>
+                <p><strong>Payment Amount:</strong> RM{{ number_format($job->payment_amount, 2) }} / day</p>
             </div>
         </div>
 

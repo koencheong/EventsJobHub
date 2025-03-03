@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -64,25 +65,39 @@ class EventController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
+            'other_job_type' => 'nullable|required_if:job_type,Others|string|max:255',
             'description' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after or equal to start_date
+            'end_date' => 'required|date|after_or_equal:start_date',
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
+            'job_photos' => 'nullable|array', // Allow an array of files
+            'job_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each file in the array
         ]);
-    
+
+        // Handle file uploads
+        $jobPhotos = [];
+        if ($request->hasFile('job_photos')) {
+            foreach ($request->file('job_photos') as $photo) {
+                $path = $photo->store('job_photos', 'public'); // Store in storage/app/public/job_photos
+                $jobPhotos[] = $path;
+            }
+        }
+
         Event::create([
             'name' => $request->name,
             'job_type' => $request->job_type,
+            'other_job_type' => $request->job_type === 'Others' ? $request->other_job_type : null,
             'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'company_id' => auth()->id(),
+            'job_photos' => $jobPhotos, // Save photo paths
         ]);
-    
-        return redirect()->route('events.index')->with('success', 'Event created successfully!');
+
+        return redirect()->route('employer.jobs')->with('success', 'Event created successfully!');
     }
 
     /**
@@ -109,24 +124,47 @@ class EventController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
+            'other_job_type' => 'nullable|required_if:job_type,Others|string|max:255',
             'description' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after or equal to start_date
+            'end_date' => 'required|date|after_or_equal:start_date',
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
         ]);
-
+    
+        // Decode existing photos to an array (handle null case)
+        $existingPhotos = is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos, true) ?? [];
+    
+        // Handle photo removal
+        if ($request->has('remove_photos')) {
+            foreach ($request->remove_photos as $photo) {
+                Storage::delete('public/' . $photo); // Delete from storage
+                $existingPhotos = array_diff($existingPhotos, [$photo]); // Remove from array
+            }
+        }
+    
+        // Handle new photo uploads
+        if ($request->hasFile('job_photos')) {
+            foreach ($request->file('job_photos') as $photo) {
+                $path = $photo->store('job_photos', 'public'); // Store in storage/app/public/job_photos
+                $existingPhotos[] = $path; // Add new photo to array
+            }
+        }
+    
+        // Save updated photo list
         $event->update([
             'name' => $request->name,
             'job_type' => $request->job_type,
+            'other_job_type' => $request->job_type === 'Others' ? $request->other_job_type : null,
             'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
+            'job_photos' => json_encode(array_values($existingPhotos)), // Ensure JSON format
         ]);
-
-        return redirect()->route('events.index')->with('success', 'Event updated successfully!');
+    
+        return redirect()->route('employer.jobs')->with('success', 'Event updated successfully!');
     }
 
     /**
@@ -135,7 +173,6 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         $event->delete();
-        return redirect()->route('events.index')->with('success', 'Event deleted successfully!');
+        return redirect()->route('employer.jobs')->with('success', 'Event deleted successfully!');
     }
-
 }

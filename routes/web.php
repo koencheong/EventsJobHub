@@ -83,3 +83,5 @@ Route::patch('/applications/{application}', [JobApplicationController::class, 'u
 Route::get('/employers/applicants/{id}', [JobApplicationController::class, 'viewApplicant'])
     ->middleware(['auth'])
     ->name('employers.viewApplicant');
+
+ Route::post('/events/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');

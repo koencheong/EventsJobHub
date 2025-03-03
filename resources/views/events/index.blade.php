@@ -33,7 +33,9 @@
                         @foreach($events as $event)
                             <tr>
                                 <td class="py-2 px-4 border-b">{{ $event->name }}</td>
-                                <td class="py-2 px-4 border-b">{{ $event->job_type }}</td>
+                                <td class="py-2 px-4 border-b">
+                                    {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}
+                                </td>
                                 <td class="py-2 px-4 border-b">{{ $event->location }}</td>
                                 <td class="py-2 px-4 border-b">
                                     @if ($event->start_date == $event->end_date)

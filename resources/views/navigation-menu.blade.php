@@ -47,7 +47,7 @@
             </div>
 
                <!-- Settings Dropdown or Guest Links -->
-            <div class="ms-3 relative">
+            <div class="ms-3 relative flex items-center">
                     @guest
                     <div class="flex items-center justify-center gap-4 py-4">
                         <a href="{{ route('login') }}" class="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md transition">Login</a>

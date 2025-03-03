@@ -12,14 +12,34 @@ class Event extends Model
     protected $fillable = [
         'name',
         'job_type',
+        'other_job_type',
         'description',
         'start_date',
         'end_date', 
         'location',
         'company_id',
         'payment_amount',
+        'job_photos'
+    ];
+    
+    protected $casts = [
+        'job_photos' => 'array',
     ];
 
+    public static function jobTypes()
+    {
+        return [
+            'Cashier',
+            'Promoter',
+            'Model',
+            'Waiter/Waitress',
+            'Event Crew',
+            'Food Crew',
+            'Sales Assistant',
+            'Others'
+        ];
+    }
+    
     public function employer()
     {
         return $this->belongsTo(User::class, 'employer_id');

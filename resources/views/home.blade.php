@@ -23,18 +23,30 @@
                 <div class="w-1/4 bg-white p-6 shadow-lg rounded-xl border border-gray-200">
                     <h3 class="text-xl font-bold mb-4">Filter Jobs</h3>
                     <form method="GET" action="{{ route('home') }}">
+                        <!-- Job Type -->
                         <label class="block text-gray-700 font-semibold">Job Type</label>
                         <select name="job_type" class="w-full p-2 border rounded-lg mb-5">
                             <option value="">All</option>
                             <option value="Cashier">Cashier</option>
                             <option value="Promoter">Promoter</option>
+                            <option value="Waiter/Waitress">Waiter/Waitress</option>
+                            <option value="Event Crew">Event Crew</option>
+                            <option value="Food Crew">Food Crew</option>
+                            <option value="Sales Assistant">Sales Assistant</option>
+                            <option value="Others">Others</option>
                         </select>
+                        <!-- Payment Range -->
                         <label class="block text-gray-700 font-semibold">Payment Range (RM)</label>
                         <input type="number" name="min_payment" class="w-full p-2 border rounded-lg mb-2" placeholder="Min">
                         <input type="number" name="max_payment" class="w-full p-2 border rounded-lg mb-5" placeholder="Max">
+                        <!-- Date Range Filter -->
+                        <label class="block text-gray-700 font-semibold">Date Range</label>
+                        <input type="date" name="start_date" class="w-full p-2 border rounded-lg mb-2">
+                        <input type="date" name="end_date" class="w-full p-2 border rounded-lg mb-5">
                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg w-full">Apply Filters</button>
                     </form>
                 </div>
+
 
                 <!-- Event Listings -->
                 <div class="w-3/4">
@@ -44,21 +56,26 @@
                     @else
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             @foreach ($events as $event)
-                                <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6">
-                                    <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
-                                    <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type }}</p>
-                                    <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
-                                    <p class="text-gray-600 mt-2">
-                                        <strong>Date:</strong>
-                                        @if ($event->start_date == $event->end_date)
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
-                                        @else
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
-                                        @endif
-                                    </p>
-                                    <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
+                                <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
+                                    <!-- Event Details (Top Content) -->
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
+                                        <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}</p>
+                                        <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
+                                        <p class="text-gray-600 mt-2">
+                                            <strong>Date:</strong>
+                                            @if ($event->start_date == $event->end_date)
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                            @else
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                            @endif
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
+                                    </div>
+
+                                    <!-- Button (Sticks to Bottom) -->
                                     <div class="mt-4">
-                                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300" onclick="openModal({{ $event->id }})">
+                                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openModal({{ $event->id }})">
                                             View Details
                                         </button>
                                     </div>
@@ -189,4 +206,13 @@
             });
         }
     </script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="start_date"]').setAttribute("min", today);
+            document.querySelector('input[name="end_date"]').setAttribute("min", today);
+        });
+    </script>
+
 </x-app-layout>

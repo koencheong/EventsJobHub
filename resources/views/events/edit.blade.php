@@ -11,11 +11,11 @@
                 <h1 class="text-3xl font-bold mb-4">Edit Event</h1>
                 
                 <!-- Edit Event Form -->
-                <form action="{{ route('events.update', $event->id) }}" method="POST">
+                <form action="{{ route('events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
-                    <!-- Event Name -->
+                    <!-- Job Name -->
                     <div class="mb-4">
                         <label for="name" class="block text-sm font-medium text-gray-700">Event Name</label>
                         <input type="text" id="name" name="name" class="w-full p-3 border border-gray-300 rounded-md" value="{{ old('name', $event->name) }}">
@@ -27,13 +27,26 @@
                     <!-- Job Type -->
                     <div class="mb-4">
                         <label for="job_type" class="block text-sm font-medium text-gray-700">Job Type</label>
-                        <input type="text" id="job_type" name="job_type" class="w-full p-3 border border-gray-300 rounded-md" value="{{ old('job_type', $event->job_type) }}">
+                        <select id="job_type" name="job_type" class="w-full p-3 border border-gray-300 rounded-md" required>
+                            @foreach(App\Models\Event::jobTypes() as $type)
+                                <option value="{{ $type }}" {{ old('job_type', $event->job_type) == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                        </select>
                         @error('job_type')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Location -->
+                    <!-- Other Job Type (Conditional) -->
+                    <div id="other_job_type_container" class="mb-4 {{ $event->job_type === 'Others' ? '' : 'hidden' }}">
+                        <label for="other_job_type" class="block text-sm font-medium text-gray-700">Specify Job Type</label>
+                        <input type="text" id="other_job_type" name="other_job_type" class="w-full p-3 border border-gray-300 rounded-md" value="{{ old('other_job_type', $event->other_job_type) }}">
+                        @error('other_job_type')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Event Location -->
                     <div class="mb-4">
                         <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
                         <input type="text" id="location" name="location" class="w-full p-3 border border-gray-300 rounded-md" value="{{ old('location', $event->location) }}">
@@ -78,6 +91,35 @@
                         @enderror
                     </div>
 
+                    <!-- Job Photos -->
+                    <div class="mb-6">
+                        <label for="job_photos" class="block text-gray-700 font-medium mb-2">Upload Job Photos</label>
+                        <input type="file" id="job_photos" name="job_photos[]" multiple
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <small class="text-gray-500">Upload up to 5 images</small>
+
+                        <!-- Display Existing Photos -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                            @php
+                                $jobPhotos = is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos ?? '[]', true);
+                            @endphp
+
+                            @forelse ($jobPhotos as $photo)
+                                <div class="relative">
+                                    <img src="{{ asset('storage/' . $photo) }}" class="w-full h-32 object-cover rounded-lg shadow">
+                                    
+                                    <!-- Checkbox with Tailwind styling -->
+                                    <label class="absolute top-2 right-2 flex items-center space-x-1 bg-white p-2 rounded-full shadow">
+                                        <input type="checkbox" name="remove_photos[]" value="{{ $photo }}" class="w-4 h-4">
+                                        <span class="text-sm text-gray-700">Remove</span>
+                                    </label>
+                                </div>
+                            @empty
+                                <p class="text-gray-500 italic">No photos uploaded</p>
+                            @endforelse
+                        </div>
+                    </div>
+
                     <!-- Submit Button -->
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
                         Save Changes
@@ -86,4 +128,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Show/hide "Other Job Type" field based on selection
+        const jobTypeSelect = document.getElementById('job_type');
+        const otherJobTypeContainer = document.getElementById('other_job_type_container');
+
+        jobTypeSelect.addEventListener('change', function() {
+            if (this.value === 'Others') {
+                otherJobTypeContainer.classList.remove('hidden');
+            } else {
+                otherJobTypeContainer.classList.add('hidden');
+            }
+        });
+
+        // Trigger change event on page load if "Others" is selected
+        if (jobTypeSelect.value === 'Others') {
+            otherJobTypeContainer.classList.remove('hidden');
+        }
+    </script>
+
+
 </x-app-layout>
