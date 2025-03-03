@@ -25,6 +25,7 @@
                             <th class="py-2 px-4 border-b">Job Type</th>
                             <th class="py-2 px-4 border-b">Location</th>
                             <th class="py-2 px-4 border-b">Date</th>
+                            <th class="py-2 px-4 border-b">Payment Amount</th>
                             <th class="py-2 px-4 border-b">Actions</th>
                         </tr>
                     </thead>
@@ -34,8 +35,14 @@
                                 <td class="py-2 px-4 border-b">{{ $event->name }}</td>
                                 <td class="py-2 px-4 border-b">{{ $event->job_type }}</td>
                                 <td class="py-2 px-4 border-b">{{ $event->location }}</td>
-                                <td class="py-2 px-4 border-b">{{ $event->date }}</td>
-                                <td class="py-2 px-4 border-b">{{ $event->payment_amount }}</td>
+                                <td class="py-2 px-4 border-b">
+                                    @if ($event->start_date == $event->end_date)
+                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                    @else
+                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                    @endif
+                                </td>
+                                <td class="py-2 px-4 border-b">RM {{ $event->payment_amount }}</td>
                                 <td class="py-2 px-4 border-b">
                                     <a href="{{ route('events.edit', $event) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
                                     <form action="{{ route('events.destroy', $event) }}" method="POST" class="inline-block">

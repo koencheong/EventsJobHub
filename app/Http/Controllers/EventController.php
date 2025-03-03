@@ -15,37 +15,36 @@ class EventController extends Controller
         $events = Event::all();
         return view('events.index', compact('events'));
     }
-
     public function showEventsForPartTimers(Request $request)
     {
         $query = Event::query();
-
+    
         // Search by event name, location, or job type
         if ($request->has('search') && $request->search != '') {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('location', 'like', '%' . $request->search . '%')
-                ->orWhere('job_type', 'like', '%' . $request->search . '%');
+                  ->orWhere('location', 'like', '%' . $request->search . '%')
+                  ->orWhere('job_type', 'like', '%' . $request->search . '%');
             });
         }
-
-        // Filter by Job Type (e.g., Cashier, Promoter, etc.)
+    
+        // Filter by Job Type
         if ($request->has('job_type') && $request->job_type != '') {
             $query->where('job_type', $request->job_type);
         }
-
+    
         // Filter by Payment Range
         if ($request->has('min_payment') && is_numeric($request->min_payment)) {
             $query->where('payment_amount', '>=', $request->min_payment);
         }
-
+    
         if ($request->has('max_payment') && is_numeric($request->max_payment)) {
             $query->where('payment_amount', '<=', $request->max_payment);
         }
-
+    
         // Fetch the filtered events
         $events = $query->get();
-
+    
         return view('home', compact('events'));
     }
 
@@ -66,22 +65,23 @@ class EventController extends Controller
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
             'description' => 'required|string',
-            'date' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after or equal to start_date
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
         ]);
-        
+    
         Event::create([
             'name' => $request->name,
             'job_type' => $request->job_type,
             'description' => $request->description,
-            'date' => $request->date,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'company_id' => auth()->id(),
         ]);
-        
-
+    
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
     }
 
@@ -110,13 +110,21 @@ class EventController extends Controller
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
             'description' => 'required|string',
-            'date' => 'required|date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date', // Ensure end_date is after or equal to start_date
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
         ]);
-        
 
-        $event->update($request->all());
+        $event->update([
+            'name' => $request->name,
+            'job_type' => $request->job_type,
+            'description' => $request->description,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'location' => $request->location,
+            'payment_amount' => $request->payment_amount,
+        ]);
 
         return redirect()->route('events.index')->with('success', 'Event updated successfully!');
     }

@@ -39,11 +39,20 @@
                             @enderror
                         </div>
 
-                        <!-- Event Date -->
+                        <!-- Event Start Date -->
                         <div class="flex flex-col">
-                            <label for="date" class="text-lg font-semibold text-gray-800">Event Date</label>
-                            <input type="date" id="date" name="date" class="mt-2 p-2 border border-gray-300 rounded" value="{{ old('date') }}" required>
-                            @error('date')
+                            <label for="start_date" class="text-lg font-semibold text-gray-800">Event Start Date</label>
+                            <input type="date" id="start_date" name="start_date" class="mt-2 p-2 border border-gray-300 rounded" value="{{ old('start_date') }}" required>
+                            @error('start_date')
+                                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Event End Date -->
+                        <div class="flex flex-col">
+                            <label for="end_date" class="text-lg font-semibold text-gray-800">Event End Date</label>
+                            <input type="date" id="end_date" name="end_date" class="mt-2 p-2 border border-gray-300 rounded" value="{{ old('end_date') }}" required>
+                            @error('end_date')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>

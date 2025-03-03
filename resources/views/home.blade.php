@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- Hero Section -->
     <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 text-black py-16 text-center">
         <h1 class="text-5xl font-bold">Welcome to Events Job Hub</h1>
         <p class="text-lg mt-4 max-w-2xl mx-auto">Find the perfect part-time event jobs with ease and start earning today!</p>
@@ -47,7 +48,14 @@
                                     <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
                                     <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type }}</p>
                                     <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
-                                    <p class="text-gray-600 mt-2"><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->date)->format('F j, Y') }}</p>
+                                    <p class="text-gray-600 mt-2">
+                                        <strong>Date:</strong>
+                                        @if ($event->start_date == $event->end_date)
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                        @else
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                        @endif
+                                    </p>
                                     <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
                                     <div class="mt-4">
                                         <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300" onclick="openModal({{ $event->id }})">
@@ -88,7 +96,6 @@
             document.getElementById('eventModal').classList.add('hidden');
         }
 
-        
         @if (Auth::check())
         // Only access the user's role if authenticated
         var role = @json(Auth::user()->role).trim().toLowerCase();
@@ -110,7 +117,10 @@
                 document.getElementById('eventModalTitle').innerText = eventData.name;
                 document.getElementById('eventModalJobType').innerText = "Job Type: " + eventData.job_type;
                 document.getElementById('eventModalLocation').innerText = "Location: " + eventData.location;
-                document.getElementById('eventModalDate').innerText = "Date: " + new Date(eventData.date).toLocaleDateString();
+                document.getElementById('eventModalDate').innerText = "Date: " + 
+                    (eventData.start_date === eventData.end_date
+                        ? new Date(eventData.start_date).toLocaleDateString()
+                        : new Date(eventData.start_date).toLocaleDateString() + " - " + new Date(eventData.end_date).toLocaleDateString());
                 document.getElementById('eventModalDescription').innerText = eventData.description;
                 document.getElementById('eventModalPayment').innerText = "Payment Rate: RM " + eventData.payment_amount + " per hour";
                 document.getElementById('eventModal').classList.remove('hidden');
@@ -178,7 +188,5 @@
                 alert('An error occurred. Please try again.');
             });
         }
-
-
     </script>
 </x-app-layout>

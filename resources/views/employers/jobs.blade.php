@@ -1,37 +1,68 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-800">
-            {{ __('My Posted Jobs') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Posted Jobs') }}
         </h2>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-4">Your Posted Jobs</h3>
-            <table class="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border p-2">Job Name</th>
-                        <th class="border p-2">Date</th>
-                        <th class="border p-2">Applications</th>
-                        <th class="border p-2">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($jobs as $job)
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6">All Events</h3>
+
+                <!-- Display success message if any -->
+                @if(session('success'))
+                    <div class="bg-green-200 text-green-800 p-4 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Table of events -->
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead>
                         <tr>
-                            <td class="border p-2">{{ $job->name }}</td>
-                            <td class="border p-2">{{ $job->date }}</td>
-                            <td class="border p-2">{{ $job->applications->count() }}</td>
-                            <td class="border p-2">
-                                <a href="{{ route('employer.jobs.applications', $job->id) }}" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                    View Applications
-                                </a>
-                            </td>
+                            <th class="py-2 px-4 border-b">Event Name</th>
+                            <th class="py-2 px-4 border-b">Job Type</th>
+                            <th class="py-2 px-4 border-b">Location</th>
+                            <th class="py-2 px-4 border-b">Date</th>
+                            <th class="py-2 px-4 border-b">Payment Amount</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($jobs as $job)
+                            <tr>
+                                <td class="py-2 px-4 border-b">{{ $job->name }}</td>
+                                <td class="py-2 px-4 border-b">{{ $job->job_type }}</td>
+                                <td class="py-2 px-4 border-b">{{ $job->location }}</td>
+                                <td class="py-2 px-4 border-b">
+                                    @if ($job->start_date == $job->end_date)
+                                        {{ \Carbon\Carbon::parse($job->start_date)->format('F j, Y') }}
+                                    @else
+                                        {{ \Carbon\Carbon::parse($job->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($job->end_date)->format('F j, Y') }}
+                                    @endif
+                                </td>
+                                <td class="py-2 px-4 border-b">RM {{ $job->payment_amount }}</td>
+                                <td class="py-2 px-4 border-b">
+                                    <a href="{{ route('events.edit', $job) }}" class="text-blue-600 hover:text-blue-800">Edit</a>
+                                    <form action="{{ route('events.destroy', $job) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                <!-- Button to create new job -->
+                <div class="mt-6">
+                    <a href="{{ route('events.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Post New Job
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
