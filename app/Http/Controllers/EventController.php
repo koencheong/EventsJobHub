@@ -16,38 +16,49 @@ class EventController extends Controller
         $events = Event::all();
         return view('events.index', compact('events'));
     }
+
     public function showEventsForPartTimers(Request $request)
     {
-        $query = Event::query();
-    
+        $query = Event::where('status', 'approved'); // Keep it as a query builder
+
         // Search by event name, location, or job type
         if ($request->has('search') && $request->search != '') {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('location', 'like', '%' . $request->search . '%')
-                  ->orWhere('job_type', 'like', '%' . $request->search . '%');
+                ->orWhere('location', 'like', '%' . $request->search . '%')
+                ->orWhere('job_type', 'like', '%' . $request->search . '%');
             });
         }
-    
+
         // Filter by Job Type
         if ($request->has('job_type') && $request->job_type != '') {
             $query->where('job_type', $request->job_type);
         }
-    
+
         // Filter by Payment Range
         if ($request->has('min_payment') && is_numeric($request->min_payment)) {
             $query->where('payment_amount', '>=', $request->min_payment);
         }
-    
+
         if ($request->has('max_payment') && is_numeric($request->max_payment)) {
             $query->where('payment_amount', '<=', $request->max_payment);
         }
+
+        // Filter by Date Range
+        if ($request->has('start_date') && $request->start_date != '') {
+            $query->whereDate('start_date', '>=', $request->start_date);
+        }
     
-        // Fetch the filtered events
-        $events = $query->get();
+        if ($request->has('end_date') && $request->end_date != '') {
+            $query->whereDate('end_date', '<=', $request->end_date);
+        }
     
+        // Fetch the filtered events with pagination
+        $events = $query->paginate(10);
+
         return view('home', compact('events'));
     }
+       
 
     /**
      * Show the form for creating a new event.
@@ -65,16 +76,16 @@ class EventController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
-            'other_job_type' => 'nullable|required_if:job_type,Others|string|max:255',
+            'other_job_type' => 'required_if:job_type,Others|max:255',
             'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
-            'job_photos' => 'nullable|array', // Allow an array of files
-            'job_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each file in the array
+            'job_photos' => 'nullable|array',
+            'job_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+    
         // Handle file uploads
         $jobPhotos = [];
         if ($request->hasFile('job_photos')) {
@@ -83,6 +94,19 @@ class EventController extends Controller
                 $jobPhotos[] = $path;
             }
         }
+    
+        // Event::create([
+        //     'name' => $request->name,
+        //     'job_type' => $request->job_type,
+        //     'other_job_type' => $request->job_type === 'Others' ? $request->other_job_type : null,
+        //     'description' => $request->description,
+        //     'start_date' => $request->start_date,
+        //     'end_date' => $request->end_date,
+        //     'location' => $request->location,
+        //     'payment_amount' => $request->payment_amount,
+        //     'company_id' => auth()->id(),
+        //     'job_photos' => $jobPhotos, // Save photo paths
+        // ]);
 
         Event::create([
             'name' => $request->name,
@@ -94,9 +118,9 @@ class EventController extends Controller
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'company_id' => auth()->id(),
-            'job_photos' => $jobPhotos, // Save photo paths
+            'job_photos' => $jobPhotos,
         ]);
-
+        
         return redirect()->route('employer.jobs')->with('success', 'Event created successfully!');
     }
 

@@ -13,35 +13,47 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @auth
-                    <x-nav-link 
-                        href="{{ Auth::user()->role == 'employer' ? route('employer-home') : route('home') }}" 
-                        :active="false">
-                        {{ __('Home') }}
-                    </x-nav-link>
-                    
-                    <x-nav-link 
-                        href="{{ Auth::user()->role == 'employer' ? route('dashboard') : route('part-timers.dashboard') }}" 
-                        :active="request()->routeIs(Auth::user()->role == 'part_timer' ? 'part-timers.dashboard' : 'dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                        @if(Auth::user()->role == 'admin')
+                            <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
+                                {{ __('Admin Dashboard') }}
+                            </x-nav-link>
+                            
+                            <x-nav-link href="{{ route('admin.employers') }}" :active="request()->routeIs('admin.employers')">
+                                {{ __('Manage Employers') }}
+                            </x-nav-link>
 
-                    <!-- Show Profile Link Only for Part-Timers -->
-                    @if(Auth::user()->role == 'part-timer')
-                        <x-nav-link 
-                            href="{{ route('public-profile.show', Auth::id()) }}" 
-                            :active="request()->routeIs('public-profile.show') || request()->routeIs('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-nav-link>
-                    @endif
+                            <x-nav-link href="{{ route('admin.partTimers') }}" :active="request()->routeIs('admin.partTimers')">
+                                {{ __('Manage Part-Timers') }}
+                            </x-nav-link>
 
-                    @if(Auth::user()->role == 'employer')
-                        <x-nav-link 
-                            href="{{ route('employer.jobs') }}" 
-                            :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
-                            {{ __('Job Applications') }}
-                        </x-nav-link>
-                    @endif
+                            <x-nav-link href="{{ route('admin.jobs') }}" :active="request()->routeIs('admin.jobs')">
+                                {{ __('Manage Jobs') }}
+                            </x-nav-link>
+                        @else
+                            <x-nav-link 
+                                href="{{ Auth::user()->role == 'employer' ? route('employer-home') : route('home') }}" 
+                                :active="false">
+                                {{ __('Home') }}
+                            </x-nav-link>
 
+                            <x-nav-link 
+                                href="{{ Auth::user()->role == 'employer' ? route('dashboard') : route('part-timers.dashboard') }}" 
+                                :active="request()->routeIs(Auth::user()->role == 'part_timer' ? 'part-timers.dashboard' : 'dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+
+                            @if(Auth::user()->role == 'part-timer')
+                                <x-nav-link href="{{ route('public-profile.show', Auth::id()) }}" :active="request()->routeIs('public-profile.show') || request()->routeIs('profile.edit')">
+                                    {{ __('Profile') }}
+                                </x-nav-link>
+                            @endif
+
+                            @if(Auth::user()->role == 'employer')
+                                <x-nav-link href="{{ route('employer.jobs') }}" :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
+                                    {{ __('Job Applications') }}
+                                </x-nav-link>
+                            @endif
+                        @endif
                     @endauth
                 </div>
             </div>

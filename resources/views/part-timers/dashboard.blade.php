@@ -88,29 +88,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const ctx = document.getElementById('earningsChart').getContext('2d');
-            const chartData = @json($earningsData); // Laravel passes earnings data
+        const chartData = @json($earningsData);
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.dates,
-                    datasets: [{
-                        label: 'Earnings (RM)',
-                        data: chartData.amounts,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
+        if (chartData.dates.length === 0) {
+            console.warn("No earnings data available.");
+            return;
+        }
+
+        const ctx = document.getElementById('earningsChart').getContext('2d');
+
+        // Reduce label density
+        const skipLabels = Math.ceil(chartData.dates.length / 7);
+        const formattedLabels = chartData.dates.map((label, index) =>
+            index % skipLabels === 0 ? label : ""
+        );
+
+        new Chart(ctx, {
+            type: 'bar', // Change to 'line' if needed
+            data: {
+                labels: formattedLabels, 
+                datasets: [{
+                    label: 'Earnings (RM)',
+                    data: chartData.amounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        barPercentage: 0.6, 
+                        categoryPercentage: 0.8,
+                    },
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
+    });
+
     </script>
 
 </x-app-layout>

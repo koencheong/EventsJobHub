@@ -47,116 +47,114 @@
                     </form>
                 </div>
 
-
+                <!-- Event Listings -->
                 <div class="w-3/4">
-                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
-                
-                @if(isset($events) && $events->isEmpty())
-                    <p class="text-center text-gray-600 text-lg">No upcoming events at the moment. Check back later!</p>
-                @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach ($events as $event)
-                            <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
-                                @php
-                                    $photos = !empty($event->job_photos) ? json_decode($event->job_photos, true) : [];
-                                @endphp
+                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
+                    @if(isset($events) && $events->isEmpty())
+                        <p class="text-center text-gray-600 text-lg">No upcoming events at the moment. Check back later!</p>
+                    @else
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach ($events as $event)
+                                <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
+                                    @php
+                                        $photos = !empty($event->job_photos) ? json_decode($event->job_photos, true) : [];
+                                    @endphp
 
-                                @if (!empty($photos) && is_array($photos) && count($photos) > 0)
-                                    <div x-data="{
-                                            currentIndex: 0, 
-                                            images: {{ Illuminate\Support\Js::from($photos) }}
-                                        }" 
-                                        class="relative w-full h-48 bg-gray-200 flex justify-center items-center overflow-hidden rounded-lg">
+                                    @if (!empty($photos) && is_array($photos) && count($photos) > 0)
+                                        <div x-data="{
+                                                currentIndex: 0, 
+                                                images: {{ Illuminate\Support\Js::from($photos) }}
+                                            }" 
+                                            class="relative w-full h-48 bg-gray-200 flex justify-center items-center overflow-hidden rounded-lg">
 
-                                        <!-- Image Display -->
-                                        <div class="relative w-full h-full">
-                                            <template x-for="(photo, index) in images" :key="index">
-                                                <img x-show="currentIndex === index" 
-                                                    :src="`{{ asset('storage') }}/${photo}`" 
-                                                    alt="Event Photo" 
-                                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500">
-                                            </template>
+                                            <!-- Image Display -->
+                                            <div class="relative w-full h-full">
+                                                <template x-for="(photo, index) in images" :key="index">
+                                                    <img x-show="currentIndex === index" 
+                                                        :src="`{{ asset('storage') }}/${photo}`" 
+                                                        alt="Event Photo" 
+                                                        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500">
+                                                </template>
+                                            </div>
+
+                                            <!-- Navigation Arrows (Hidden if Only One Photo) -->
+                                            <button x-show="images.length > 1" 
+                                                @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1"
+                                                class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
+                                                &#10094;
+                                            </button>
+                                            <button x-show="images.length > 1" 
+                                                @click="currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0"
+                                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
+                                                &#10095;
+                                            </button>
+
+                                            <!-- Pagination Dots -->
+                                            <div x-show="images.length > 1" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                                                <template x-for="(photo, index) in images" :key="index">
+                                                    <div @click="currentIndex = index"
+                                                        class="w-2.5 h-2.5 rounded-full cursor-pointer"
+                                                        :class="currentIndex === index ? 'bg-white' : 'bg-gray-400 opacity-50'">
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
+                                    @endif
 
-                                        <!-- Navigation Arrows (Hidden if Only One Photo) -->
-                                        <button x-show="images.length > 1" 
-                                            @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1"
-                                            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
-                                            &#10094;
-                                        </button>
-                                        <button x-show="images.length > 1" 
-                                            @click="currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0"
-                                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
-                                            &#10095;
-                                        </button>
-
-                                        <!-- Pagination Dots -->
-                                        <div x-show="images.length > 1" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-                                            <template x-for="(photo, index) in images" :key="index">
-                                                <div @click="currentIndex = index"
-                                                    class="w-2.5 h-2.5 rounded-full cursor-pointer"
-                                                    :class="currentIndex === index ? 'bg-white' : 'bg-gray-400 opacity-50'">
-                                                </div>
-                                            </template>
-                                        </div>
+                                    <!-- Event Details -->
+                                    <div class="mt-4">
+                                        <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
+                                        <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}</p>
+                                        <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
+                                        <p class="text-gray-600 mt-2">
+                                            <strong>Date:</strong>
+                                            @if ($event->start_date == $event->end_date)
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                            @else
+                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                            @endif
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
                                     </div>
-                                @endif
 
-                                <!-- Event Details -->
-                                <div class="mt-4">
-                                    <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
-                                    <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}</p>
-                                    <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
-                                    <p class="text-gray-600 mt-2">
-                                        <strong>Date:</strong>
-                                        @if ($event->start_date == $event->end_date)
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
-                                        @else
-                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
-                                        @endif
-                                    </p>
-                                    <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
+                                    <!-- Button (Sticks to Bottom) -->
+                                    <div class="mt-4">
+                                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openSidePanel({{ $event->id }})">
+                                            View Details
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <!-- Button (Sticks to Bottom) -->
-                                <div class="mt-4">
-                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openModal({{ $event->id }})">
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal structure (hidden by default) -->
-    <div id="eventModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full">
-            <button type="button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onclick="closeModal()">&times;</button>
-            <h2 id="eventModalTitle" class="text-2xl font-bold text-gray-800"></h2>
-            <p id="eventModalJobType" class="text-gray-600 mt-2"></p>
-            <p id="eventModalLocation" class="text-gray-600 mt-2"></p>
-            <p id="eventModalDate" class="text-gray-600 mt-2"></p>
-            <p id="eventModalPayment" class="text-gray-600 mt-2"></p>
-            <p id="eventModalDescription" class="text-gray-600 mt-4"></p>
+    <!-- Side Panel (hidden by default) -->
+    <div id="sidePanel" class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl transform transition-transform duration-300 translate-x-full">
+        <div class="p-6">
+            <button type="button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onclick="closeSidePanel()">&times;</button>
+            <h2 id="sidePanelTitle" class="text-2xl font-bold text-gray-800"></h2>
+            <p id="sidePanelJobType" class="text-gray-600 mt-2"></p>
+            <p id="sidePanelLocation" class="text-gray-600 mt-2"></p>
+            <p id="sidePanelDate" class="text-gray-600 mt-2"></p>
+            <p id="sidePanelPayment" class="text-gray-600 mt-2"></p>
+            <p id="sidePanelDescription" class="text-gray-600 mt-4"></p>
 
-            <!-- Modal buttons -->
+            <!-- Side Panel buttons -->
             <div class="flex justify-between mt-6">
-                <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded" onclick="closeModal()">Close</button>
+                <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded" onclick="closeSidePanel()">Close</button>
                 <button id="applyButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Apply</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById('eventModal').classList.add('hidden');
+        // Function to close the side panel
+        function closeSidePanel() {
+            document.getElementById('sidePanel').classList.add('translate-x-full');
         }
 
         @if (Auth::check())
@@ -171,27 +169,26 @@
         
         let currentEventId = null;
 
-        // Function to open the modal and load event data
-        function openModal(eventId) {
-            const eventData = @json($events).find(event => event.id === eventId);
-            currentEventId = eventId; // Store the current event ID for applying
+        // Function to open the side panel and load event data
+        function openSidePanel(eventId) {
+            const eventsArray = @json($events).data; // Fix: Access 'data' array
+            const eventData = eventsArray.find(event => event.id === eventId);
 
             if (eventData) {
-                document.getElementById('eventModalTitle').innerText = eventData.name;
-                document.getElementById('eventModalJobType').innerText = "Job Type: " + eventData.job_type;
-                document.getElementById('eventModalLocation').innerText = "Location: " + eventData.location;
-                document.getElementById('eventModalDate').innerText = "Date: " + 
-                    (eventData.start_date === eventData.end_date
-                        ? new Date(eventData.start_date).toLocaleDateString()
-                        : new Date(eventData.start_date).toLocaleDateString() + " - " + new Date(eventData.end_date).toLocaleDateString());
-                document.getElementById('eventModalDescription').innerText = eventData.description;
-                document.getElementById('eventModalPayment').innerText = "Payment Rate: RM " + eventData.payment_amount + " per hour";
-                document.getElementById('eventModal').classList.remove('hidden');
+                document.getElementById('sidePanelTitle').innerText = eventData.name;
+                document.getElementById('sidePanelJobType').innerText = "Job Type: " + eventData.job_type;
+                document.getElementById('sidePanelLocation').innerText = "Location: " + eventData.location;
+                document.getElementById('sidePanelDate').innerText = "Date: " + eventData.start_date;
+                document.getElementById('sidePanelPayment').innerText = "Payment Rate: RM " + eventData.payment_amount;
+                document.getElementById('sidePanelDescription').innerText = eventData.description;
+                document.getElementById('sidePanel').classList.remove('translate-x-full');
 
                 // Set the apply button event
                 document.getElementById('applyButton').onclick = function() {
-                    applyForJob(currentEventId);
+                    applyForJob(eventId);
                 };
+            } else {
+                console.error("Event not found:", eventId);
             }
         }
 
@@ -244,7 +241,7 @@
             })
             .then(data => {
                 alert(data.message);
-                closeModal();
+                closeSidePanel();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -260,5 +257,4 @@
             document.querySelector('input[name="end_date"]').setAttribute("min", today);
         });
     </script>
-
 </x-app-layout>

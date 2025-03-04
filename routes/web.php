@@ -5,6 +5,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PartTimerProfileController;
+use App\Http\Controllers\AdminController;
 
 // Dashboard Route (Authenticated Users)
 Route::middleware([
@@ -18,13 +19,15 @@ Route::middleware([
     // Role-Based Redirect Route
     Route::get('/redirect', function () {
         $user = Auth::user();
-
-        if ($user->role === 'employer') {
+    
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard'); // Admin Panel
+        } elseif ($user->role === 'employer') {
             return redirect()->route('dashboard'); // Employer Dashboard
         } elseif ($user->role === 'part_timer') {
             return redirect()->route('part-timers.dashboard'); // Part-Timer Dashboard
         } else {
-            return redirect()->route('home'); // Fallback Home
+            return redirect('/'); // Default fallback (or change this)
         }
     })->name('redirect');
 });
@@ -49,11 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/apply/{event}', [JobApplicationController::class, 'applyForJob'])->name('apply');
     Route::get('/dashboard/applications', [JobApplicationController::class, 'viewApplications'])->name('dashboard.applications');
     Route::delete('/applications/{id}/cancel', [JobApplicationController::class, 'cancel'])->name('applications.cancel');
-});
-
-// Default Fallback (If User Tries /home)
-Route::get('/home', function () {
-    return redirect()->route('redirect');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -84,4 +82,20 @@ Route::get('/employers/applicants/{id}', [JobApplicationController::class, 'view
     ->middleware(['auth'])
     ->name('employers.viewApplicant');
 
- Route::post('/events/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/employers', [AdminController::class, 'manageEmployers'])->name('admin.employers');
+    Route::get('/admin/employers/{id}', [AdminController::class, 'viewEmployer'])->name('admin.employer.view');
+    Route::delete('/admin/employers/{id}', [AdminController::class, 'deleteEmployer'])->name('admin.employer.delete');
+
+    Route::get('/admin/part-timers', [AdminController::class, 'managePartTimers'])->name('admin.partTimers');
+    Route::get('/admin/part-timers/{id}', [AdminController::class, 'viewPartTimer'])->name('admin.partTimer.view');
+    Route::delete('/admin/part-timers/{id}', [AdminController::class, 'deletePartTimer'])->name('admin.partTimer.delete');
+
+    Route::get('/admin/jobs', [AdminController::class, 'manageJobs'])->name('admin.jobs');
+    Route::post('/admin/jobs/{id}/approve', [AdminController::class, 'approveJob'])->name('admin.jobs.approve');
+    Route::post('/admin/jobs/{id}/reject', [AdminController::class, 'rejectJob'])->name('admin.jobs.reject');
+});

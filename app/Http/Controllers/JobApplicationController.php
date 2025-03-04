@@ -51,7 +51,7 @@ class JobApplicationController extends Controller
 
         // Count completed and upcoming jobs
         $completedJobs = JobApplication::where('user_id', $userId)
-                        ->where('status', 'completed')
+                        ->where('status', 'paid')
                         ->count();
 
         $upcomingJobs = JobApplication::where('user_id', $userId)
@@ -65,23 +65,23 @@ class JobApplicationController extends Controller
                         ->whereMonth('job_applications.updated_at', now()->month)
                         ->sum('events.payment_amount'); // Fetch from the events table
 
-        // Earnings data for Chart.js (grouped by date)
-        $earningsData = JobApplication::where('job_applications.user_id', $userId)
-                ->where('job_applications.status', 'paid')
-                ->join('events', 'job_applications.event_id', '=', 'events.id')
-                ->whereMonth('job_applications.updated_at', now()->month)
-                ->selectRaw('DATE(job_applications.updated_at) as date, SUM(events.payment_amount) as total')
-                ->groupBy('job_applications.updated_at')
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'date' => $item->date,
-                        'total' => $item->total,
-                    ];
-                });
-
+                        $earningsDataCollection = JobApplication::where('job_applications.user_id', $userId)
+                        ->where('job_applications.status', 'paid')
+                        ->join('events', 'job_applications.event_id', '=', 'events.id')
+                        ->whereMonth('job_applications.updated_at', now()->month)
+                        ->selectRaw('DATE(job_applications.updated_at) as date, SUM(events.payment_amount) as total')
+                        ->groupByRaw('DATE(job_applications.updated_at)') // Fix grouping
+                        ->orderBy('date', 'asc')
+                        ->get();
+                    
+        // Convert to Chart.js format
+        $earningsData = [
+            'dates' => $earningsDataCollection->pluck('date')->toArray(),
+            'amounts' => $earningsDataCollection->pluck('total')->toArray(),
+        ];
+                    
         return view('part-timers.dashboard', compact('applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData'));
-    }
+    }                    
 
     public function cancel($id)
     {
@@ -110,16 +110,14 @@ class JobApplicationController extends Controller
         if (auth()->user()->role !== 'employer') {
             abort(403, 'Unauthorized');
         }
-        
-        $jobs = Event::where('company_id', auth()->id())->get();
+    
+        $jobs = Event::where('company_id', auth()->id())->withCount('applications')->get();
         return view('employers.jobs', compact('jobs'));
     }
-
 
     public function viewApplications(Event $job)
     {
         $applications = JobApplication::where('event_id', $job->id)
-                        ->where('status', '!=', 'canceled')
                         ->with('user')
                         ->get();
         
@@ -157,17 +155,20 @@ class JobApplicationController extends Controller
         if (auth()->user()->role !== 'employer') {
             abort(403, 'Unauthorized');
         }
-
-        // Ensure the job belongs to the logged-in employer
-        if ($application->event->company_id !== auth()->id()) {
-            abort(403, 'Unauthorized');
+    
+        // Prevent status modification if it is already in a final state
+        if (in_array($application->status, ['completed', 'paid', 'canceled'])) {
+            return redirect()->back()->with('error', 'You cannot modify this application anymore.');
         }
-
-        // Validate and update status
-        $request->validate(['status' => 'required|in:pending,accepted,rejected']);
+    
+        $request->validate([
+            'status' => 'required|in:pending,approved,completed,rejected,paid,canceled'
+        ]);
+    
         $application->update(['status' => $request->status]);
-
-        return redirect()->back()->with('success', 'Application status updated successfully.');
+    
+        return redirect()->back()->with('success', 'Job status updated successfully.');
     }
+    
 
 }

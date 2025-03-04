@@ -19,7 +19,7 @@ class Event extends Model
         'location',
         'company_id',
         'payment_amount',
-        'job_photos'
+        'job_photos',
     ];
     
     protected $casts = [
@@ -42,7 +42,7 @@ class Event extends Model
     
     public function employer()
     {
-        return $this->belongsTo(User::class, 'employer_id');
+        return $this->belongsTo(User::class, 'company_id');
     }
 
     public function applications()
