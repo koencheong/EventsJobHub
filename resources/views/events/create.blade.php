@@ -147,5 +147,23 @@
         if (jobTypeSelect.value === 'Others') {
             otherJobTypeContainer.classList.remove('hidden');
         }
+
+        // Not more than 5 photos
+        document.addEventListener('DOMContentLoaded', function () {
+            const jobPhotosInput = document.getElementById('job_photos');
+
+            jobPhotosInput.addEventListener('change', function (event) {
+                const existingPhotos = document.querySelectorAll('input[name="remove_photos[]"]').length;
+                const selectedFiles = this.files.length;
+                const totalPhotos = existingPhotos + selectedFiles;
+
+                if (totalPhotos > 5) {
+                    alert(`You can only have up to 5 images. You already have ${existingPhotos} existing images.`);
+                    this.value = ''; // Reset file input
+                }
+            });
+        });
+
     </script>
+
 </x-app-layout>

@@ -11,7 +11,7 @@
                 <h1 class="text-3xl font-bold mb-4">Edit Event</h1>
                 
                 <!-- Edit Event Form -->
-                <form action="{{ route('events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
+                <form id="edit-event-form" action="{{ route('events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -146,6 +146,22 @@
         if (jobTypeSelect.value === 'Others') {
             otherJobTypeContainer.classList.remove('hidden');
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const jobPhotosInput = document.getElementById('job_photos');
+
+            jobPhotosInput.addEventListener('change', function (event) {
+                const existingPhotos = document.querySelectorAll('input[name="remove_photos[]"]').length;
+                const selectedFiles = this.files.length;
+                const totalPhotos = existingPhotos + selectedFiles;
+
+                if (totalPhotos > 5) {
+                    alert(`You can only have up to 5 images. You already have ${existingPhotos} existing images.`);
+                    this.value = ''; // Reset file input
+                }
+            });
+        });
+
     </script>
 
 

@@ -48,42 +48,88 @@
                 </div>
 
 
-                <!-- Event Listings -->
                 <div class="w-3/4">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
-                    @if(isset($events) && $events->isEmpty())
-                        <p class="text-center text-gray-600 text-lg">No upcoming events at the moment. Check back later!</p>
-                    @else
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            @foreach ($events as $event)
-                                <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
-                                    <!-- Event Details (Top Content) -->
-                                    <div>
-                                        <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
-                                        <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}</p>
-                                        <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
-                                        <p class="text-gray-600 mt-2">
-                                            <strong>Date:</strong>
-                                            @if ($event->start_date == $event->end_date)
-                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
-                                            @else
-                                                {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
-                                            @endif
-                                        </p>
-                                        <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
-                                    </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
+                
+                @if(isset($events) && $events->isEmpty())
+                    <p class="text-center text-gray-600 text-lg">No upcoming events at the moment. Check back later!</p>
+                @else
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @foreach ($events as $event)
+                            <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
+                                @php
+                                    $photos = !empty($event->job_photos) ? json_decode($event->job_photos, true) : [];
+                                @endphp
 
-                                    <!-- Button (Sticks to Bottom) -->
-                                    <div class="mt-4">
-                                        <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openModal({{ $event->id }})">
-                                            View Details
+                                @if (!empty($photos) && is_array($photos) && count($photos) > 0)
+                                    <div x-data="{
+                                            currentIndex: 0, 
+                                            images: {{ Illuminate\Support\Js::from($photos) }}
+                                        }" 
+                                        class="relative w-full h-48 bg-gray-200 flex justify-center items-center overflow-hidden rounded-lg">
+
+                                        <!-- Image Display -->
+                                        <div class="relative w-full h-full">
+                                            <template x-for="(photo, index) in images" :key="index">
+                                                <img x-show="currentIndex === index" 
+                                                    :src="`{{ asset('storage') }}/${photo}`" 
+                                                    alt="Event Photo" 
+                                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500">
+                                            </template>
+                                        </div>
+
+                                        <!-- Navigation Arrows (Hidden if Only One Photo) -->
+                                        <button x-show="images.length > 1" 
+                                            @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1"
+                                            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
+                                            &#10094;
                                         </button>
+                                        <button x-show="images.length > 1" 
+                                            @click="currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0"
+                                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full z-10">
+                                            &#10095;
+                                        </button>
+
+                                        <!-- Pagination Dots -->
+                                        <div x-show="images.length > 1" class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                                            <template x-for="(photo, index) in images" :key="index">
+                                                <div @click="currentIndex = index"
+                                                    class="w-2.5 h-2.5 rounded-full cursor-pointer"
+                                                    :class="currentIndex === index ? 'bg-white' : 'bg-gray-400 opacity-50'">
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
+                                @endif
+
+                                <!-- Event Details -->
+                                <div class="mt-4">
+                                    <h3 class="text-xl font-semibold text-gray-800">{{ $event->name }}</h3>
+                                    <p class="text-gray-600 mt-2"><strong>Job Type:</strong> {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}</p>
+                                    <p class="text-gray-600 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
+                                    <p class="text-gray-600 mt-2">
+                                        <strong>Date:</strong>
+                                        @if ($event->start_date == $event->end_date)
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                        @else
+                                            {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                        @endif
+                                    </p>
+                                    <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
                                 </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+
+                                <!-- Button (Sticks to Bottom) -->
+                                <div class="mt-4">
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openModal({{ $event->id }})">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
             </div>
         </div>
     </div>
