@@ -58,7 +58,7 @@
                             @error('location')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label for="payment_amount" class="block text-lg font-medium text-gray-800">Payment Amount (RM)</label>
+                            <label for="payment_amount" class="block text-lg font-medium text-gray-800">Payment Amount (RM) / Day</label>
                             <input type="number" id="payment_amount" name="payment_amount" class="mt-2 w-full p-2 border border-gray-300 rounded-lg" step="0.01" value="{{ old('payment_amount', $event->payment_amount) }}" required>
                             @error('payment_amount')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>

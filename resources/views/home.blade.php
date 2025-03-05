@@ -133,7 +133,7 @@
     </div>
 
     <!-- Side Panel (hidden by default) -->
-    <div id="sidePanel" class="fixed inset-y-0 right-0 w-96 bg-white shadow-xl transform transition-transform duration-300 translate-x-full">
+    <div id="sidePanel" class="fixed inset-y-0 right-0 w-[40rem] bg-white shadow-xl transform transition-transform duration-300 translate-x-full overflow-y-auto">
         <div class="p-6">
             <button type="button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onclick="closeSidePanel()">&times;</button>
             <h2 id="sidePanelTitle" class="text-2xl font-bold text-gray-800"></h2>
@@ -142,6 +142,13 @@
             <p id="sidePanelDate" class="text-gray-600 mt-2"></p>
             <p id="sidePanelPayment" class="text-gray-600 mt-2"></p>
             <p id="sidePanelDescription" class="text-gray-600 mt-4"></p>
+
+            <!-- Google Maps Section -->
+            <div class="mt-6">
+                <h3 class="text-xl font-bold text-gray-800">Event Location</h3>
+                <div id="map" style="height: 300px; width: 100%; margin-top: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"></div>
+                <p id="map-error" class="text-red-500 mt-2" style="display: none;">Unable to load the map. Please check the address.</p>
+            </div>
 
             <!-- Side Panel buttons -->
             <div class="flex justify-between mt-6">
@@ -182,6 +189,9 @@
                 document.getElementById('sidePanelPayment').innerText = "Payment Rate: RM " + eventData.payment_amount;
                 document.getElementById('sidePanelDescription').innerText = eventData.description;
                 document.getElementById('sidePanel').classList.remove('translate-x-full');
+
+                // Initialize the map
+                initMap(eventData.location);
 
                 // Set the apply button event
                 document.getElementById('applyButton').onclick = function() {
@@ -256,5 +266,39 @@
             document.querySelector('input[name="start_date"]').setAttribute("min", today);
             document.querySelector('input[name="end_date"]').setAttribute("min", today);
         });
+    </script>
+
+    <!-- Google Maps Script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAS6LJUe32nG4zgJ8_FDo78Zd3w4Df8o80&callback=initMap" async defer></script>
+    <script>
+        let map;
+
+        // Initialize and display the map
+        function initMap(location) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: location }, (results, status) => {
+                if (status === "OK") {
+                    // Hide the error message
+                    document.getElementById("map-error").style.display = "none";
+
+                    // Initialize the map
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 15,
+                        center: results[0].geometry.location,
+                    });
+
+                    // Add a marker for the event location
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                        title: location,
+                    });
+                } else {
+                    console.error("Geocode was not successful for the following reason: " + status);
+                    // Show the error message
+                    document.getElementById("map-error").style.display = "block";
+                }
+            });
+        }
     </script>
 </x-app-layout>
