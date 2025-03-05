@@ -54,6 +54,10 @@
                                 </x-nav-link>
                             @endif
                         @endif
+                        <!-- Open Chat Button -->
+                        <x-nav-link href="{{ route('chatify') }}" :active="request()->routeIs('chatify')">
+                            {{ __('Chat') }}
+                        </x-nav-link>
                     @endauth
                 </div>
             </div>

@@ -127,7 +127,7 @@ class JobApplicationController extends Controller
             });
     
         return view('part-timers.dashboard', compact(
-            'applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData', 'thisYearEarnings'
+            'applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData', 'thisYearEarnings','userId'
         ));
     }
     
