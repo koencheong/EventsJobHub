@@ -21,6 +21,22 @@
                 </p>
                 <p><strong>Payment Amount:</strong> RM{{ number_format($job->payment_amount, 2) }} / day</p>
                 <p class="md:col-span-2"><strong>Description:</strong> {{ $job->description }}</p>
+			    <div class="mt-5">
+                    <h3 class="text-xl font-semibold">Job Photos</h3>
+                    @php
+                        $photos = is_array($job->job_photos) ? $job->job_photos : json_decode($job->job_photos, true);
+                    @endphp
+
+                    @if (!empty($photos) && is_array($photos) && count($photos) > 0)
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                            @foreach ($photos as $photo)
+                                <img src="{{ asset('storage/' . $photo) }}" alt="Job Photo" class="rounded-lg shadow-md w-full">
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-600 mt-2 italic">No job photos available.</p>
+                    @endif
+			    </div>
             </div>
         </div>
 

@@ -43,46 +43,95 @@ class JobApplicationController extends Controller
     public function partTimerDashboard()
     {
         $userId = Auth::id(); // Get logged-in part-timer's ID
-
+    
         // Fetch applications with related event details
         $applications = JobApplication::with('event')
                         ->where('user_id', $userId)
                         ->get();
-
+    
         // Count completed and upcoming jobs
         $completedJobs = JobApplication::where('user_id', $userId)
                         ->where('status', 'paid')
                         ->count();
-
+    
         $upcomingJobs = JobApplication::where('user_id', $userId)
                         ->where('status', 'approved')
                         ->count();
-
-        // Calculate total earnings (only from 'paid' applications)
+    
+        // Calculate total earnings correctly for multi-date events (Current Month)
         $totalEarnings = JobApplication::where('job_applications.user_id', $userId)
                         ->where('job_applications.status', 'paid')
                         ->join('events', 'job_applications.event_id', '=', 'events.id')
-                        ->whereMonth('job_applications.updated_at', now()->month)
-                        ->sum('events.payment_amount'); // Fetch from the events table
-
-                        $earningsDataCollection = JobApplication::where('job_applications.user_id', $userId)
+                        ->whereBetween('job_applications.updated_at', [
+                            now()->startOfMonth(), now()->endOfMonth()
+                        ])
+                        ->get()
+                        ->sum(function ($application) {
+                            $eventDays = \Carbon\Carbon::parse($application->start_date)
+                                        ->diffInDays(\Carbon\Carbon::parse($application->end_date)) + 1;
+    
+                            return $application->payment_amount * $eventDays; // Multiply daily rate by duration
+                        });
+    
+        // Get earnings data for both current and previous month
+        $earningsDataCollection = JobApplication::where('job_applications.user_id', $userId)
                         ->where('job_applications.status', 'paid')
                         ->join('events', 'job_applications.event_id', '=', 'events.id')
-                        ->whereMonth('job_applications.updated_at', now()->month)
-                        ->selectRaw('DATE(job_applications.updated_at) as date, SUM(events.payment_amount) as total')
-                        ->groupByRaw('DATE(job_applications.updated_at)') // Fix grouping
-                        ->orderBy('date', 'asc')
+                        ->whereBetween('job_applications.updated_at', [
+                            now()->subMonth()->startOfMonth(), now()->endOfMonth()
+                        ])
                         ->get();
-                    
+    
+        // Generate dates for both months 
+        $allDates = collect();
+        $start = now()->subMonth()->startOfMonth();
+        $end = now()->endOfMonth(); 
+    
+        while ($start->lte($end)) {
+            $allDates->put($start->toDateString(), 0); // Initialize all dates with 0 earnings
+            $start->addDay();
+        }
+    
+        // Distribute earnings across each event's dates
+        foreach ($earningsDataCollection as $application) {
+            $eventStart = \Carbon\Carbon::parse($application->start_date);
+            $eventEnd = \Carbon\Carbon::parse($application->end_date);
+            $eventDays = $eventStart->diffInDays($eventEnd) + 1;
+            $dailyEarnings = $application->payment_amount; // Earnings per day
+    
+            while ($eventStart->lte($eventEnd)) {
+                $dateKey = $eventStart->toDateString();
+                if ($allDates->has($dateKey)) {
+                    $allDates[$dateKey] += $dailyEarnings; // Add daily earnings to that date
+                }
+                $eventStart->addDay();
+            }
+        }
+    
         // Convert to Chart.js format
         $earningsData = [
-            'dates' => $earningsDataCollection->pluck('date')->toArray(),
-            'amounts' => $earningsDataCollection->pluck('total')->toArray(),
+            'dates' => $allDates->keys()->toArray(),
+            'amounts' => $allDates->values()->toArray(),
         ];
-                    
-        return view('part-timers.dashboard', compact('applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData'));
-    }                    
-
+    
+        // Calculate this year's earnings correctly
+        $thisYearEarnings = JobApplication::where('job_applications.user_id', $userId)
+            ->where('job_applications.status', 'paid')
+            ->join('events', 'job_applications.event_id', '=', 'events.id')
+            ->whereYear('job_applications.updated_at', now()->year)
+            ->get()
+            ->sum(function ($application) {
+                $eventDays = \Carbon\Carbon::parse($application->start_date)
+                            ->diffInDays(\Carbon\Carbon::parse($application->end_date)) + 1;
+                return $application->payment_amount * $eventDays; 
+            });
+    
+        return view('part-timers.dashboard', compact(
+            'applications', 'completedJobs', 'upcomingJobs', 'totalEarnings', 'earningsData', 'thisYearEarnings'
+        ));
+    }
+    
+    
     public function cancel($id)
     {
         $application = JobApplication::findOrFail($id);
@@ -170,5 +219,4 @@ class JobApplicationController extends Controller
         return redirect()->back()->with('success', 'Job status updated successfully.');
     }
     
-
 }

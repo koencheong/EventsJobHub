@@ -78,25 +78,6 @@
                             <label for="job_photos" class="block text-lg font-medium text-gray-800">Upload Job Photos</label>
                             <input type="file" id="job_photos" name="job_photos[]" multiple class="mt-2 w-full p-2 border border-gray-300 rounded-lg">
                             <small class="text-gray-500">Upload up to 5 images</small>
-
-                            <!-- Display Existing Photos -->
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                                @php
-                                    $jobPhotos = isset($event) ? (is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos ?? '[]', true)) : [];
-                                @endphp
-
-                                @forelse ($jobPhotos as $photo)
-                                    <div class="relative">
-                                        <img src="{{ asset('storage/' . $photo) }}" class="w-full h-32 object-cover rounded-lg shadow">
-                                        <label class="absolute top-2 right-2 flex items-center space-x-1 bg-white p-2 rounded-full shadow">
-                                            <input type="checkbox" name="remove_photos[]" value="{{ $photo }}" class="w-4 h-4">
-                                            <span class="text-sm text-gray-700">Remove</span>
-                                        </label>
-                                    </div>
-                                @empty
-                                    <p class="text-gray-500 italic">No photos uploaded</p>
-                                @endforelse
-                            </div>
                         </div>
                     </div>
 

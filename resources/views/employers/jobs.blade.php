@@ -43,7 +43,7 @@
                 </div>
 
                 <h3 class="text-2xl font-semibold text-gray-800 mb-6">Approved Jobs</h3>
-                <div class="overflow-x-auto rounded-lg shadow-sm">
+                <div class="overflow-x-auto rounded-lg shadow-sm mb-8">
                     <table class="min-w-full bg-white">
                         <thead class="bg-gray-50">
                             <tr>
@@ -86,12 +86,35 @@
                     </table>
                 </div>
 
-                <div class="flex justify-center mt-4">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6">Rejected Jobs</h3>
+                <div class="overflow-x-auto rounded-lg shadow-sm">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Event Name</th>
+                                <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700">Reason for Rejection</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @foreach($jobs->where('status', 'rejected') as $job)
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="py-4 px-6">{{ $job->name }}</td>
+                                    <td class="py-4 px-6">{{ $job->rejection_reason ?? 'No reason provided' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-left mt-4">
                     <a href="{{ route('events.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
                         Add New Job
                     </a>
                 </div>
 
+                <div class="flex justify-between items-center mt-6">
+                        <a href="{{ route('reports.create') }}" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
+                            Report an Issue </a>
+                </div>
             </div>
         </div>
     </div>

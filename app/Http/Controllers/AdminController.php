@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Event;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Report;
 
 class AdminController extends Controller
 {
@@ -78,12 +79,39 @@ class AdminController extends Controller
     }
 
     // Reject a job posting
-    public function rejectJob($id)
+    public function rejectJob(Request $request, $id)
     {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+    
         $job = Event::findOrFail($id);
         $job->status = 'rejected';
+        $job->rejection_reason = $request->input('rejection_reason');
         $job->save();
-
-        return redirect()->route('admin.jobs')->with('success', 'Job rejected successfully.');
+    
+        return redirect()->back()->with('error', 'Job has been rejected.');
     }
+    
+
+    // Manage reports
+    public function manageReports()
+    {
+        $reports = Report::latest()->get();
+        return view('reports.index', compact('reports'));
+    }
+
+    public function viewReport($id)
+    {
+        $report = Report::findOrFail($id);
+        return view('reports.view', compact('report'));
+    }
+
+    public function deleteReport($id)
+    {
+        Report::findOrFail($id)->delete();
+        return redirect()->route('admin.reports')->with('success', 'Report deleted successfully.');
+    }
+
+
 }

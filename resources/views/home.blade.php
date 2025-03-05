@@ -57,7 +57,7 @@
                             @foreach ($events as $event)
                                 <div class="bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between">
                                     @php
-                                        $photos = !empty($event->job_photos) ? json_decode($event->job_photos, true) : [];
+                                        $photos = is_string($event->job_photos) ? json_decode($event->job_photos, true) : [];
                                     @endphp
 
                                     @if (!empty($photos) && is_array($photos) && count($photos) > 0)

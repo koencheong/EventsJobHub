@@ -91,24 +91,12 @@ class EventController extends Controller
         if ($request->hasFile('job_photos')) {
             foreach ($request->file('job_photos') as $photo) {
                 $path = $photo->store('job_photos', 'public'); // Store in storage/app/public/job_photos
-                $jobPhotos[] = $path;
+                $jobPhotos[] = $path; // Add new photo path to array
             }
         }
     
-        // Event::create([
-        //     'name' => $request->name,
-        //     'job_type' => $request->job_type,
-        //     'other_job_type' => $request->job_type === 'Others' ? $request->other_job_type : null,
-        //     'description' => $request->description,
-        //     'start_date' => $request->start_date,
-        //     'end_date' => $request->end_date,
-        //     'location' => $request->location,
-        //     'payment_amount' => $request->payment_amount,
-        //     'company_id' => auth()->id(),
-        //     'job_photos' => $jobPhotos, // Save photo paths
-        // ]);
-
-        Event::create([
+        // Create the event and store job photos as JSON (same as update)
+        $event = Event::create([
             'name' => $request->name,
             'job_type' => $request->job_type,
             'other_job_type' => $request->job_type === 'Others' ? $request->other_job_type : null,
@@ -118,11 +106,12 @@ class EventController extends Controller
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'company_id' => auth()->id(),
-            'job_photos' => $jobPhotos,
+            'job_photos' => json_encode($jobPhotos), // Save photo paths as JSON
         ]);
-        
+    
         return redirect()->route('employer.jobs')->with('success', 'Event created successfully!');
     }
+    
 
     /**
      * Display the specified event.

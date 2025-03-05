@@ -6,6 +6,8 @@ use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PartTimerProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
+
 
 // Dashboard Route (Authenticated Users)
 Route::middleware([
@@ -86,6 +88,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
+    Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
+});
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/employers', [AdminController::class, 'manageEmployers'])->name('admin.employers');
     Route::get('/admin/employers/{id}', [AdminController::class, 'viewEmployer'])->name('admin.employer.view');
@@ -98,4 +105,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/jobs', [AdminController::class, 'manageJobs'])->name('admin.jobs');
     Route::post('/admin/jobs/{id}/approve', [AdminController::class, 'approveJob'])->name('admin.jobs.approve');
     Route::post('/admin/jobs/{id}/reject', [AdminController::class, 'rejectJob'])->name('admin.jobs.reject');
+
+    Route::get('/reports', [AdminController::class, 'manageReports'])->name('admin.reports');
+    Route::get('/reports/{id}', [AdminController::class, 'viewReport'])->name('admin.reports.view');
+    Route::delete('/reports/{id}', [AdminController::class, 'deleteReport'])->name('admin.reports.delete');
 });
+
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
