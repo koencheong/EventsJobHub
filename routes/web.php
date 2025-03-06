@@ -8,6 +8,7 @@ use App\Http\Controllers\PartTimerProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use Chatify\Http\Controllers\MessagesController;
+use App\Http\Controllers\RatingController;
 
 // Dashboard Route (Authenticated Users)
 Route::middleware([
@@ -119,3 +120,6 @@ Route::get('/messages', function () {
 })->middleware('auth');
 
 
+Route::get('/events/{event}/rate/{toUser}/{type}', [RatingController::class, 'create'])->name('ratings.create');
+Route::post('/events/{event}/rate', [RatingController::class, 'store'])->name('events.rate');
+Route::get('/ratings/{userId}', [RatingController::class, 'showRatings'])->name('ratings.show');

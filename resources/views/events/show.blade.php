@@ -5,62 +5,112 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300 min-h-screen">
+    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+            <!-- Event Details Card -->
             <div class="bg-white shadow-xl rounded-lg p-8">
                 <!-- Event Name -->
-                <h1 class="text-2xl font-bold text-gray-900">{{ $event->name }}</h1>
-                <hr class="my-4 border-gray-300">
-                
-                <!-- Job Type -->
-                <p class="text-gray-700"><strong>Job Type:</strong> 
-                    {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}
-                </p>
-                
-                <!-- Location -->
-                <p class="text-gray-700 mt-2"><strong>Location:</strong> {{ $event->location }}</p>
-                
-                <!-- Date -->
-                <p class="text-gray-700 mt-2">
-                    <strong>Date:</strong> 
-                    @if ($event->start_date == $event->end_date)
-                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
-                    @else
-                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
-                    @endif
-                </p>
-                
-                <!-- Payment -->
-                <p class="text-gray-700 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }} / Day</p>
-                <hr class="my-4 border-gray-300">
-                
-                <!-- Description -->
-                <h3 class="text-lg font-semibold">Job Description</h3>
-                <p class="text-gray-800 mt-2">{{ $event->description }}</p>
-                <hr class="my-4 border-gray-300">
-                
-                <!-- Job Photos -->
-                <h3 class="text-lg font-semibold">Job Photos</h3>
-                @php
-                    $photos = is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos, true);
-                @endphp
-                @if (!empty($photos) && is_array($photos) && count($photos) > 0)
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                        @foreach ($photos as $photo)
-                            <img src="{{ asset('storage/' . $photo) }}" alt="Job Photo" class="rounded-lg shadow-md w-full">
-                        @endforeach
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ $event->name }}</h1>
+
+                <!-- Event Details Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Job Type -->
+                    <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl text-indigo-600">
+                                <i class="bi bi-briefcase"></i> <!-- Bootstrap Job Type Icon -->
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-semibold">Job Type</p>
+                                <p class="text-gray-900 text-lg">
+                                    {{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                @else
-                    <p class="text-gray-600 mt-2 italic">No job photos available.</p>
-                @endif
-                <hr class="my-4 border-gray-300">
-                
+
+                    <!-- Location -->
+                    <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl text-blue-600">
+                                <i class="bi bi-geo-alt"></i> <!-- Bootstrap Location Icon -->
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-semibold">Location</p>
+                                <p class="text-gray-900 text-lg">{{ $event->location }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl text-purple-600">
+                                <i class="bi bi-calendar-event"></i> <!-- Bootstrap Date Icon -->
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-semibold">Date</p>
+                                <p class="text-gray-900 text-lg">
+                                    @if ($event->start_date == $event->end_date)
+                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
+                                    @else
+                                        {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - 
+                                        {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl text-green-600">
+                                <i class="bi bi-currency-dollar"></i> <!-- Bootstrap Payment Icon -->
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-semibold">Payment</p>
+                                <p class="text-gray-900 text-lg">RM {{ $event->payment_amount }} / Day</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mt-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Description</h3>
+                    <p class="text-gray-700 leading-relaxed">{{ $event->description }}</p>
+                </div>
+
+                <!-- Job Photos (If Available) -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Job Photos</h3>
+                    
+                    @php
+                        $photos = is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos, true);
+                    @endphp
+
+                    @if (!empty($photos) && is_array($photos) && count($photos) > 0)
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            @foreach ($photos as $photo)
+                                <div class="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                                    <img src="{{ asset('storage/' . $photo) }}" alt="Job Photo" class="w-full h-48 object-cover">
+                                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition"></div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-600 italic">No job photos available.</p>
+                    @endif
+                </div>
+
                 <!-- Google Maps Section -->
-                <h3 class="text-lg font-semibold">Event Location on Map</h3>
-                <div id="map" style="height: 300px; width: 100%; margin-top: 10px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"></div>
-                <p id="map-error" class="text-red-500 mt-2" style="display: none;">Unable to load the map. Please check the address.</p>
-                <hr class="my-4 border-gray-300">
-                
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Event Location on Map</h3>
+                    <div id="map" class="w-full h-96 rounded-lg shadow-md overflow-hidden"></div>
+                    <p id="map-error" class="text-red-500 mt-2" style="display: none;">Unable to load the map. Please check the address.</p>
+                </div>
+
                 <!-- Buttons: Back on Left, Message on Right -->
                 <div class="mt-8 flex justify-between">
                     @if (auth()->user()->role === 'part-timer')
@@ -94,8 +144,8 @@
         </div>
     </div>
 
-     <!-- Google Maps Script -->
-     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAS6LJUe32nG4zgJ8_FDo78Zd3w4Df8o80"></script>
+    <!-- Google Maps Script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAS6LJUe32nG4zgJ8_FDo78Zd3w4Df8o80"></script>
     <script>
         let map;
 
@@ -133,4 +183,7 @@
             initMap(eventLocation); // Initialize the map with the event location
         });
     </script>
+
+    <!-- Include Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 </x-app-layout>

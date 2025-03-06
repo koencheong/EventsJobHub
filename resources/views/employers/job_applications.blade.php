@@ -78,21 +78,29 @@
                                     <div class="flex items-center justify-center gap-4">
                                         <!-- View Profile Button -->
                                         <a href="{{ route('employers.viewApplicant', ['id' => $application->user_id]) }}" 
-                                           class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+                                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
                                             View Applicant
                                         </a>
 
+                                        <!-- Rate Part-Timer Button (Visible only for 'completed' or 'paid' status) -->
+                                        @if(in_array($application->status, ['completed', 'paid']))
+                                            <a href="{{ route('ratings.create', ['event' => $application->event_id, 'toUser' => $application->user_id, 'type' => 'employer_to_part_timer']) }}" 
+                                            class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
+                                                Rate Part-Timer
+                                            </a>
+                                        @endif
+
                                         <!-- Status Update Dropdown -->
                                         <div x-data="{ showModal: false, selectedStatus: '', applicationId: '' }">
-                                        <select @change="selectedStatus = $event.target.value; applicationId = {{ $application->id }}; showModal = true;" 
-                                            class="appearance-none border px-9 py-2 rounded-md bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-200 cursor-pointer text-gray-700"
-                                            {{ in_array($application->status, ['paid', 'rejected', 'canceled']) ? 'disabled' : '' }}>
-                                            <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="approved" {{ $application->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                            <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                            <option value="completed" {{ $application->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                            <option value="paid" {{ $application->status == 'paid' ? 'selected' : '' }}>Paid</option>
-                                        </select>
+                                            <select @change="selectedStatus = $event.target.value; applicationId = {{ $application->id }}; showModal = true;" 
+                                                class="appearance-none border px-9 py-2 rounded-md bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-200 cursor-pointer text-gray-700"
+                                                {{ in_array($application->status, ['paid', 'rejected', 'canceled']) ? 'disabled' : '' }}>
+                                                <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                <option value="approved" {{ $application->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                                <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                                <option value="completed" {{ $application->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                                <option value="paid" {{ $application->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                                            </select>
 
                                             <!-- Modal for Confirmation -->
                                             <div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -134,6 +142,7 @@
                                         </div>
                                     </div>
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

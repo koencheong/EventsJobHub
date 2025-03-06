@@ -5,53 +5,65 @@
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-gradient-to-r from-blue-100 via-indigo-200 to-purple-300">
+    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-xl sm:rounded-lg p-8 rounded-xl overflow-hidden">
+            <div class="bg-white shadow-xl rounded-lg p-8">
                 <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <!-- Full Name -->
                     <div class="mb-6">
-                        <label for="full_name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+                        <label for="full_name" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-person text-blue-600 mr-2"></i> Full Name
+                        </label>
                         <input type="text" id="full_name" name="full_name" value="{{ old('full_name', $profile->full_name) }}"
-                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">
                     </div>
 
                     <!-- Bio -->
                     <div class="mb-6">
-                        <label for="bio" class="block text-gray-700 font-medium mb-2">Bio</label>
+                        <label for="bio" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-pencil text-blue-600 mr-2"></i> Bio
+                        </label>
                         <textarea id="bio" name="bio" rows="3"
-                                  class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ old('bio', $profile->bio) }}</textarea>
+                                  class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">{{ old('bio', $profile->bio) }}</textarea>
                     </div>
 
                     <!-- Phone -->
                     <div class="mb-6">
-                        <label for="phone" class="block text-gray-700 font-medium mb-2">Phone</label>
+                        <label for="phone" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-telephone text-blue-600 mr-2"></i> Phone
+                        </label>
                         <input type="text" id="phone" name="phone" value="{{ old('phone', $profile->phone) }}"
-                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">
                     </div>
 
                     <!-- Location -->
                     <div class="mb-6">
-                        <label for="location" class="block text-gray-700 font-medium mb-2">Location</label>
+                        <label for="location" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-geo-alt text-blue-600 mr-2"></i> Location
+                        </label>
                         <input type="text" id="location" name="location" value="{{ old('location', $profile->location) }}"
-                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">
                     </div>
 
                     <!-- Work Experience -->
                     <div class="mb-6">
-                        <label for="work_experience" class="block text-gray-700 font-medium mb-2">Work Experience</label>
+                        <label for="work_experience" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-briefcase text-blue-600 mr-2"></i> Work Experience
+                        </label>
                         <input type="text" id="work_experience" name="work_experience"
                                value="{{ old('work_experience', $profile->work_experience) }}"
-                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">
                     </div>
 
                     <!-- Work Photos -->
                     <div class="mb-6">
-                        <label for="work_photos" class="block text-gray-700 font-medium mb-2">Upload Work Photos</label>
+                        <label for="work_photos" class="block text-gray-700 font-medium mb-2">
+                            <i class="bi bi-images text-blue-600 mr-2"></i> Upload Work Photos
+                        </label>
                         <input type="file" id="work_photos" name="work_photos[]" multiple
-                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                               class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-300">
                         <small class="text-gray-500">Upload up to 5 images</small>
 
                         <!-- Display Existing Photos -->
@@ -61,8 +73,8 @@
                             @endphp
 
                             @forelse ($workPhotos as $photo)
-                                <div class="relative">
-                                    <img src="{{ asset('storage/' . $photo) }}" class="w-full h-32 object-cover rounded-lg shadow">
+                                <div class="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                                    <img src="{{ asset('storage/' . $photo) }}" class="w-full h-32 object-cover">
                                     
                                     <!-- Checkbox with Tailwind styling -->
                                     <label class="absolute top-2 right-2 flex items-center space-x-1 bg-white p-2 rounded-full shadow">
@@ -76,10 +88,11 @@
                         </div>
                     </div>
 
-                    <!-- Save Button -->
-                    <div class="text-center">
+                    <!-- Buttons -->
+                    <div class="flex justify-center space-x-4">
+                        <!-- Save Button -->
                         <button type="submit"
-                                class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition hover:bg-blue-700">
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
                             Save Changes
                         </button>
                     </div>
@@ -87,4 +100,7 @@
             </div>
         </div>
     </div>
+
+    <!-- Include Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 </x-app-layout>

@@ -19,47 +19,14 @@ class EventController extends Controller
 
     public function showEventsForPartTimers(Request $request)
     {
-        $query = Event::where('status', 'approved'); // Keep it as a query builder
-
-        // Search by event name, location, or job type
-        if ($request->has('search') && $request->search != '') {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('location', 'like', '%' . $request->search . '%')
-                ->orWhere('job_type', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // Filter by Job Type
-        if ($request->has('job_type') && $request->job_type != '') {
-            $query->where('job_type', $request->job_type);
-        }
-
-        // Filter by Payment Range
-        if ($request->has('min_payment') && is_numeric($request->min_payment)) {
-            $query->where('payment_amount', '>=', $request->min_payment);
-        }
-
-        if ($request->has('max_payment') && is_numeric($request->max_payment)) {
-            $query->where('payment_amount', '<=', $request->max_payment);
-        }
-
-        // Filter by Date Range
-        if ($request->has('start_date') && $request->start_date != '') {
-            $query->whereDate('start_date', '>=', $request->start_date);
-        }
+        $events = Event::where('start_date', '>=', now()->toDateString())
+            ->where('status', 'approved') // Assuming 'approved' is stored as a string
+            ->orderBy('start_date')
+            ->paginate(10);
     
-        if ($request->has('end_date') && $request->end_date != '') {
-            $query->whereDate('end_date', '<=', $request->end_date);
-        }
-    
-        // Fetch the filtered events with pagination
-        $events = $query->paginate(10);
-
         return view('home', compact('events'));
     }
-       
-
+    
     /**
      * Show the form for creating a new event.
      */
