@@ -140,7 +140,7 @@
 
     <!-- Side Panel (hidden by default) -->
     <div id="sidePanel" class="fixed inset-y-0 right-0 w-[40rem] bg-white shadow-xl transform transition-transform duration-300 translate-x-full overflow-y-auto">
-        <div class="p-6">
+        <div class="p-7">
             <button type="button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onclick="closeSidePanel()">&times;</button>
             <h2 id="sidePanelTitle" class="text-2xl font-bold text-gray-800"></h2>
             <p id="sidePanelJobType" class="text-gray-600 mt-2"></p>
@@ -151,7 +151,9 @@
                 <i class="bi bi-calendar-event text-purple-600 mr-2"></i> <strong>Date:</strong> <span id="dateText"></span>
             </p>
             <p id="sidePanelTime" class="text-gray-600 mt-2">
-                <i class="bi bi-clock text-yellow-600 mr-2"></i> <strong>Time:</strong> <span id="timeText"></span>
+                <i class="bi bi-clock text-yellow-600 mr-2"></i> 
+                <strong>Time:</strong> <span id="startTimeText"></span> - <span id="endTimeText"></span>
+            </p>
             <p id="sidePanelPayment" class="text-gray-600 mt-2">
                 <i class="bi bi-currency-dollar text-green-600 mr-2"></i> <strong>Payment Rate:</strong> <span id="paymentText"></span>
             </p>
@@ -340,6 +342,12 @@
                 document.getElementById('sidePanelJobType').innerText = "Job Type: " + eventData.job_type;
                 document.getElementById('sidePanelLocation').innerText = "Location: " + eventData.location;
                 document.getElementById('sidePanelDate').innerText = "Date: " + eventData.start_date;
+
+                 // Convert start_time and end_time to AM/PM format
+                let startTime = formatTime(eventData.start_time);
+                let endTime = formatTime(eventData.end_time);
+                document.getElementById('sidePanelTime').innerText = "Time: " + startTime + " - " + endTime;
+        
                 document.getElementById('sidePanelPayment').innerText = "Payment Rate: RM " + eventData.payment_amount;
                 document.getElementById('sidePanelDescription').innerText = eventData.description;
                 document.getElementById('sidePanel').classList.remove('translate-x-full');
@@ -354,6 +362,20 @@
             } else {
                 console.error("Event not found:", eventId);
             }
+        }
+
+        function formatTime(timeString) {
+            if (!timeString) return "N/A"; // Handle empty values
+
+            let time = new Date("1970-01-01T" + timeString); // Convert to Date object
+            let hours = time.getHours();
+            let minutes = time.getMinutes();
+            
+            let ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12 || 12; // Convert 24h to 12h format
+            minutes = minutes.toString().padStart(2, "0"); // Ensure two-digit minutes
+
+            return `${hours}:${minutes} ${ampm}`;
         }
 
         // Function to show the custom confirmation modal

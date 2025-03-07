@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewJobPosted;
 
 class EventController extends Controller
 {
@@ -79,6 +81,11 @@ class EventController extends Controller
             'company_id' => auth()->id(),
             'job_photos' => json_encode($jobPhotos), // Save photo paths as JSON
         ]);
+
+        $admin = User::where('role', 'admin')->first(); // Ensure you have a way to identify the admin
+        if ($admin) {
+            $admin->notify(new NewJobPosted($event));
+        }
     
         return redirect()->route('employer.jobs')->with('success', 'Event created successfully!');
     }

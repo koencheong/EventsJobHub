@@ -140,8 +140,16 @@
                                                     Cancel
                                                 </button>
                                             </form>
+                                        @elseif ($application->status == 'canceled')
+                                            <form action="{{ route('applications.delete', $application->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         @endif
-                                        </td>
+                                    </td>
                                     </tr>
                                 @endforeach
                             </tbody>

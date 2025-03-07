@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Event;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Report;
+use App\Notifications\JobApproved;
+use App\Notifications\JobRejected;
 
 class AdminController extends Controller
 {
@@ -75,6 +77,13 @@ class AdminController extends Controller
         $job->status = 'approved';
         $job->save();
 
+       
+        if ($job->employer) { 
+            $job->employer->notify(new JobApproved($job));
+        } else {
+            \Log::error("Job ID {$job->id} has no associated employer.");
+        }
+        
         return redirect()->route('admin.jobs')->with('success', 'Job approved successfully.');
     }
 
@@ -89,6 +98,12 @@ class AdminController extends Controller
         $job->status = 'rejected';
         $job->rejection_reason = $request->input('rejection_reason');
         $job->save();
+
+        if ($job->employer) { 
+            $job->employer->notify(new JobRejected($job));
+        } else {
+            \Log::error("Job ID {$job->id} has no associated employer.");
+        }
     
         return redirect()->back()->with('error', 'Job has been rejected.');
     }

@@ -87,6 +87,8 @@ Route::get('/employers/applicants/{id}', [JobApplicationController::class, 'view
     ->middleware(['auth'])
     ->name('employers.viewApplicant');
 
+Route::delete('/applications/{id}/delete', [JobApplicationController::class, 'delete'])->name('applications.delete');
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });
@@ -133,3 +135,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employer/profile/edit', [EmployerProfileController::class, 'edit'])->name('employer.profile.edit');
     Route::post('/employer/profile/update', [EmployerProfileController::class, 'update'])->name('employer.profile.update');
 });
+
+Route::patch('/notifications/{id}/read', function ($id) {
+    $notification = auth()->user()->notifications()->find($id);
+    if ($notification) {
+        $notification->markAsRead();
+    }
+    return back();
+})->middleware('auth')->name('notifications.markAsRead');
+
+Route::get('/notifications', function () {
+    return view('notifications.index');
+})->middleware(['auth'])->name('notifications.index');

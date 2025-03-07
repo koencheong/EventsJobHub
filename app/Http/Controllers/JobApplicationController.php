@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobApplication;
 use App\Models\Event;
+use App\Models\User;
+use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewJobApplication;
 
 class JobApplicationController extends Controller
 {
@@ -18,27 +20,36 @@ class JobApplicationController extends Controller
             if (!$user || $user->role !== 'part-timer') {
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
-
+    
+            // Fetch the event
+            $event = Event::findOrFail($eventId);
+    
             // Check if the user already applied
             $existingApplication = JobApplication::where('user_id', $user->id)
-                                                ->where('event_id', $eventId)
-                                                ->first();
-
+                                                 ->where('event_id', $eventId)
+                                                 ->first();
+    
             if ($existingApplication) {
-                return response()->json(['message' => 'You have already applied for this job.']);
+                return response()->json(['message' => 'You have already applied for this job.'], 400);
             }
-
+    
             // Save the application
-            JobApplication::create([
+            $application = JobApplication::create([
                 'user_id' => $user->id,
                 'event_id' => $eventId,
             ]);
-
+            
+            $employer = User::where('id', $event->company_id)->first();
+            if ($employer) {
+                $employer->notify(new NewJobApplication($application));
+            }
+    
             return response()->json(['message' => 'Application successful!']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
+    
 
     public function partTimerDashboard()
     {
@@ -141,6 +152,18 @@ class JobApplicationController extends Controller
         }
 
         return redirect()->back()->with('success', 'Application canceled successfully.');
+    }
+
+    public function delete($id)
+    {
+        $application = JobApplication::findOrFail($id);
+
+        if ($application->status === 'canceled') {
+            $application->delete();
+            return redirect()->back()->with('success', 'Application deleted successfully.');
+        }
+
+        return redirect()->back()->with('error', 'You can only delete canceled applications.');
     }
 
     public function checkApplication($eventId)

@@ -60,6 +60,10 @@
                         <x-nav-link href="{{ route('chatify') }}" :active="request()->routeIs('chatify')">
                             {{ __('Chat') }}
                         </x-nav-link>
+                        <!-- Notifications -->
+                        <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.index')">
+                            {{ __('Notifications') }}
+                        </x-nav-link>
                     @endauth
                 </div>
             </div>

@@ -51,4 +51,6 @@ class Event extends Model
     {
         return $this->hasMany(JobApplication::class, 'event_id');
     }
+
+
 }
