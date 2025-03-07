@@ -44,7 +44,7 @@ Route::get('/events/{event}', [EventController::class, 'show'])->name('events.sh
 
 // Employer Home
 Route::get('/employer-home', function () {
-    return view('employer-home');
+    return view('employers.employer-home');
 })->name('employer-home');
 
 // Part-Timer Dashboard (With Auth Middleware)
@@ -123,3 +123,5 @@ Route::get('/messages', function () {
 Route::get('/events/{event}/rate/{toUser}/{type}', [RatingController::class, 'create'])->name('ratings.create');
 Route::post('/events/{event}/rate', [RatingController::class, 'store'])->name('events.rate');
 Route::get('/ratings/{userId}', [RatingController::class, 'showRatings'])->name('ratings.show');
+
+Route::get('/recommended-jobs', [JobApplicationController::class, 'recommendedJobs'])->name('jobs.recommended');

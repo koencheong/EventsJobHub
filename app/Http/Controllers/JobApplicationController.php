@@ -219,4 +219,39 @@ class JobApplicationController extends Controller
         return redirect()->back()->with('success', 'Job status updated successfully.');
     }
     
+    // Recommend Jobs
+    public function recommendedJobs()
+    {
+        $user = auth()->user(); // Get the logged-in part-timer
+    
+        // Get job types the user has applied for in the past
+        $appliedJobTypes = JobApplication::join('events', 'job_applications.event_id', '=', 'events.id')
+            ->where('job_applications.user_id', $user->id)
+            ->pluck('events.job_type') // Retrieve only job_type values
+            ->toArray(); // Convert to an array
+    
+        // Get locations of jobs the user has applied for in the past
+        $appliedLocations = JobApplication::join('events', 'job_applications.event_id', '=', 'events.id')
+            ->where('job_applications.user_id', $user->id)
+            ->pluck('events.location') // Retrieve only location values
+            ->toArray(); // Convert to an array
+    
+        // Recommend jobs matching the preferred job types or locations, and are still open
+        $recommendedJobs = Event::where('status', 'approved')
+            ->where(function ($query) use ($appliedJobTypes, $appliedLocations) {
+                if (!empty($appliedJobTypes)) {
+                    $query->whereIn('job_type', $appliedJobTypes);
+                }
+                if (!empty($appliedLocations)) {
+                    $query->orWhereIn('location', $appliedLocations);
+                }
+            })
+            ->whereNotIn('id', $user->applications()->pluck('event_id')) // Exclude already applied jobs
+            ->limit(10)
+            ->get();
+    
+        return view('events.recommended', compact('recommendedJobs'));
+    }
+    
+
 }
