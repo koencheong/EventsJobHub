@@ -51,6 +51,9 @@
                                 <x-nav-link href="{{ route('employer.jobs') }}" :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
                                     {{ __('Job Applications') }}
                                 </x-nav-link>
+                                <x-nav-link href="{{ route('employer.profile.show') }}">
+                                    {{ __('Profile') }}
+                                </x-nav-link>
                             @endif
                         @endif
                         <!-- Open Chat Button -->

@@ -9,6 +9,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 use Chatify\Http\Controllers\MessagesController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\EmployerProfileController;
+
 
 // Dashboard Route (Authenticated Users)
 Route::middleware([
@@ -125,3 +127,9 @@ Route::post('/events/{event}/rate', [RatingController::class, 'store'])->name('e
 Route::get('/ratings/{userId}', [RatingController::class, 'showRatings'])->name('ratings.show');
 
 Route::get('/recommended-jobs', [JobApplicationController::class, 'recommendedJobs'])->name('jobs.recommended');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/employer/profile', [EmployerProfileController::class, 'show'])->name('employer.profile.show');
+    Route::get('/employer/profile/edit', [EmployerProfileController::class, 'edit'])->name('employer.profile.edit');
+    Route::post('/employer/profile/update', [EmployerProfileController::class, 'update'])->name('employer.profile.update');
+});
