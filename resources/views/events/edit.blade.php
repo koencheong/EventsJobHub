@@ -73,17 +73,17 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 flatpickr("#start_time", {
-                                    enableTime: true,        // Enable time selection
-                                    noCalendar: true,        // Disable date selection
-                                    dateFormat: "H:i",       // Time format: Hours:Minutes
-                                    minuteIncrement: 30,     // Set 30-minute increments
+                                    enableTime: true,     
+                                    noCalendar: true,    
+                                    dateFormat: "H:i",       
+                                    minuteIncrement: 15,    
                                 });
 
                                 flatpickr("#end_time", {
-                                    enableTime: true,        // Enable time selection
-                                    noCalendar: true,        // Disable date selection
-                                    dateFormat: "H:i",       // Time format: Hours:Minutes
-                                    minuteIncrement: 30,     // Set 30-minute increments
+                                    enableTime: true,      
+                                    noCalendar: true,       
+                                    dateFormat: "H:i",      
+                                    minuteIncrement: 15,    
                                 });
                             });
                         </script>
@@ -139,6 +139,4 @@
             </div>
         </div>
     </div>
-
 </x-app-layout>
-

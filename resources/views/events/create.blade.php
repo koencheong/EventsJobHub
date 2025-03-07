@@ -84,14 +84,14 @@
                                     enableTime: true,        // Enable time selection
                                     noCalendar: true,        // Disable date selection
                                     dateFormat: "H:i",       // Time format: Hours:Minutes
-                                    minuteIncrement: 30,     // Set 30-minute increments
+                                    minuteIncrement: 15,     // Set 15-minute increments
                                 });
 
                                 flatpickr("#end_time", {
                                     enableTime: true,        // Enable time selection
                                     noCalendar: true,        // Disable date selection
                                     dateFormat: "H:i",       // Time format: Hours:Minutes
-                                    minuteIncrement: 30,     // Set 30-minute increments
+                                    minuteIncrement: 15,     // Set 15-minute increments
                                 });
                             });
                         </script>
