@@ -91,30 +91,10 @@
                 </div>
 
                    <!-- Ratings and Feedback Section -->
-                   <div class="mt-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Ratings and Feedback</h3>
-                    <div class="space-y-6">
-                        @if($profile->ratings && $profile->ratings->count() > 0)
-                            @foreach($profile->ratings as $rating)
-                                <div class="p-6 bg-gray-100 rounded-lg shadow-md border border-gray-200">
-                                    <div class="flex items-center space-x-4">
-                                        <!-- Display stars for rating -->
-                                        <div class="flex space-x-1">
-                                            @for($i = 0; $i < 5; $i++)
-                                                <svg class="w-5 h-5 {{ $i < $rating->stars ? 'text-yellow-500' : 'text-gray-400' }}" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
-                                                </svg>
-                                            @endfor
-                                        </div>
-                                        <p class="text-gray-700 text-lg">{{ $rating->feedback }}</p>
-                                    </div>
-                                    <p class="text-gray-500 text-sm mt-2">{{ $rating->created_at->diffForHumans() }}</p>
-                                </div>
-                            @endforeach
-                        @else
-                            <p class="text-gray-500">No ratings yet.</p>
-                        @endif
-                    </div>
+                   <a href="{{ route('ratings.show', ['userId' => auth()->id()]) }}" 
+                    class="bg-green-500 text-white px-4 py-2.5 rounded-md text-sm hover:bg-green-600 transition">
+                        View Ratings
+                    </a>
                 </div>
 
                 <!-- Edit Button -->

@@ -47,12 +47,14 @@ class EventController extends Controller
             'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after_or_equal:start_time',
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
             'job_photos' => 'nullable|array',
             'job_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
+        
         // Handle file uploads
         $jobPhotos = [];
         if ($request->hasFile('job_photos')) {
@@ -70,6 +72,8 @@ class EventController extends Controller
             'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'company_id' => auth()->id(),
@@ -104,13 +108,17 @@ class EventController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'job_type' => 'required|string',
-            'other_job_type' => 'nullable|required_if:job_type,Others|string|max:255',
+            'other_job_type' => 'required_if:job_type,Others|max:255',
             'description' => 'required|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after_or_equal:start_time',
             'location' => 'required|string',
             'payment_amount' => 'required|numeric|min:0',
-        ]);
+            'job_photos' => 'nullable|array',
+            'job_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);        
     
         // Decode existing photos to an array (handle null case)
         $existingPhotos = is_array($event->job_photos) ? $event->job_photos : json_decode($event->job_photos, true) ?? [];
@@ -139,6 +147,8 @@ class EventController extends Controller
             'description' => $request->description,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'location' => $request->location,
             'payment_amount' => $request->payment_amount,
             'job_photos' => json_encode(array_values($existingPhotos)), // Ensure JSON format

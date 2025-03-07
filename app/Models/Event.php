@@ -16,6 +16,8 @@ class Event extends Model
         'description',
         'start_date',
         'end_date', 
+        'start_time',
+        'end_time',
         'location',
         'company_id',
         'payment_amount',

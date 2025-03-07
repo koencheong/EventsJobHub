@@ -62,6 +62,22 @@
                         </div>
                     </div>
 
+                    <!-- Time -->
+                    <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-2xl text-pink-600">
+                                <i class="bi bi-clock"></i> <!-- Bootstrap Time Icon -->
+                            </div>
+                            <div>
+                                <p class="text-gray-600 font-semibold">Time</p>
+                                <p class="text-gray-900 text-lg">
+                                    {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }} - 
+                                    {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Payment -->
                     <div class="p-6 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                         <div class="flex items-center space-x-4">
@@ -111,19 +127,32 @@
                     <p id="map-error" class="text-red-500 mt-2" style="display: none;">Unable to load the map. Please check the address.</p>
                 </div>
 
-                <!-- Buttons: Back on Left, Message on Right -->
-                <div class="mt-8 flex justify-between">
+            <!-- Buttons: Back on Left, Message on Right -->
+            <div class="mt-8 flex justify-between">
+                @if (auth()->check())
                     @if (auth()->user()->role === 'part-timer')
                         <a href="{{ route('part-timers.dashboard') }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                                 hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
                             Back to Dashboard
                         </a>
+                        <!-- Message Employer Button -->
+                        <a href="{{ url('/chatify/' . $event->company_id) }}" 
+                        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                                hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
+                            ✉️ Send a Message
+                        </a>
                     @elseif (auth()->user()->role === 'admin')
                         <a href="{{ route('admin.jobs') }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                                 hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
                             Back
+                        </a>
+                        <!-- Message Employer Button -->
+                        <a href="{{ url('/chatify/' . $event->company_id) }}" 
+                        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                                hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
+                            ✉️ Send a Message
                         </a>
                     @else
                         <a href="{{ route('dashboard') }}" 
@@ -132,14 +161,15 @@
                             Back
                         </a>
                     @endif
-
-                    <!-- Message Employer Button -->
-                    <a href="{{ url('/chatify/' . $event->company_id) }}" 
-                    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
-                            hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
-                        ✉️ Send a Message
-                    </a>
-                </div>
+                @else
+                @php
+                dd("test");
+                <a href="{{ route('home') }}" 
+                class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                        hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
+                    Back
+                </a>
+                @endif
             </div>
         </div>
     </div>

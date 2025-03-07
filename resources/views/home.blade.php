@@ -4,26 +4,22 @@
         <!-- Background Images -->
         <div class="absolute inset-0 z-0">
             <div id="hero-carousel" class="relative w-full h-full">
-                <!-- Image 1 -->
                 <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100" data-carousel-item>
-                    <img src="https://i.pinimg.com/736x/66/e7/30/66e7300ed076a216ebbe8c8e9b82dc4c.jpg" alt="Event 1" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/img1.jpg') }}" alt="Event 2" class="w-full h-full object-cover">
                 </div>
-                <!-- Image 2 -->
                 <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0" data-carousel-item>
-                    <img src="https://www.shutterstock.com/image-photo/job-recruitment-recruiting-hiring-overhead-260nw-1930282715.jpg" alt="Event 2" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/img2.jpg') }}" alt="Event 3" class="w-full h-full object-cover">
                 </div>
-                <!-- Image 3 -->
                 <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0" data-carousel-item>
-                    <img src="https://i.pinimg.com/736x/b9/61/98/b96198d29fb8876f196bb0be92c34d2e.jpg" alt="Event 3" class="w-full h-full object-cover">
+                    <img src="{{ asset('images/img3.jpg') }}" alt="Event 3" class="w-full h-full object-cover">
                 </div>
             </div>
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
         </div>
 
         <!-- Hero Content -->
         <div class="relative text-white px-4">
-            <h1 class="text-5xl font-bold mb-6">Welcome to Events Job Hub</h1>
+            <h1 class="text-5xl font-bold mb-6">Welcome to Event Jobs Hub</h1>
             <p class="text-lg max-w-2xl mx-auto mb-8">Find the perfect part-time event jobs with ease and start earning today!</p>
             <!-- Search Form -->
             <div class="flex bg-white rounded-full shadow-lg p-2 max-w-lg mx-auto">
@@ -35,12 +31,12 @@
         </div>
 
         <!-- Carousel Navigation Buttons -->
-        <button id="prev-button" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full z-20 hover:bg-opacity-70 transition duration-300">
+        <!-- <button id="prev-button" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full z-20 hover:bg-opacity-70 transition duration-300">
             &#10094;
         </button>
         <button id="next-button" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full z-20 hover:bg-opacity-70 transition duration-300">
             &#10095;
-        </button>
+        </button>-->
     </div>
 
     <!-- Main Content -->
@@ -71,7 +67,7 @@
                         <label class="block text-gray-700 font-semibold">Date Range</label>
                         <input type="date" id="start-date" class="w-full p-2 border rounded-lg mb-2">
                         <input type="date" id="end-date" class="w-full p-2 border rounded-lg mb-5">
-                        <button type="button" id="clear-filters" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg w-full mb-2">
+                        <button type="button" id="clear-filters" class="bg-blue-600 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg w-full mb-2">
                             Clear Filters
                         </button>
                     </div>
@@ -87,7 +83,9 @@
                                  data-job-type="{{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}" 
                                  data-payment="{{ $event->payment_amount }}" 
                                  data-start-date="{{ $event->start_date }}" 
-                                 data-end-date="{{ $event->end_date }}">
+                                 data-end-date="{{ $event->end_date }}"
+                                 data-start-time="{{ $event->start_time }}"
+                                 data-end-time="{{ $event->end_time }}">
                                 <!-- Image Section with Default Placeholder -->
                                 <div class="relative w-full h-48 bg-gray-200 flex justify-center items-center overflow-hidden rounded-lg">
                                     @php
@@ -120,6 +118,9 @@
                                             {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
                                         @endif
                                     </p>
+                                    <p class="text-gray-600 mt-2">
+                                        <strong>Time:</strong>
+                                        {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }} - {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
                                     <p class="text-gray-600 mt-2"><strong>Payment:</strong> RM {{ $event->payment_amount }}</p>
                                 </div>
 
@@ -149,6 +150,8 @@
             <p id="sidePanelDate" class="text-gray-600 mt-2">
                 <i class="bi bi-calendar-event text-purple-600 mr-2"></i> <strong>Date:</strong> <span id="dateText"></span>
             </p>
+            <p id="sidePanelTime" class="text-gray-600 mt-2">
+                <i class="bi bi-clock text-yellow-600 mr-2"></i> <strong>Time:</strong> <span id="timeText"></span>
             <p id="sidePanelPayment" class="text-gray-600 mt-2">
                 <i class="bi bi-currency-dollar text-green-600 mr-2"></i> <strong>Payment Rate:</strong> <span id="paymentText"></span>
             </p>
@@ -216,40 +219,23 @@
 
     <!-- JavaScript for Hero Carousel -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const carouselItems = document.querySelectorAll("[data-carousel-item]");
-            const prevButton = document.getElementById("prev-button");
-            const nextButton = document.getElementById("next-button");
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('[data-carousel-item]');
             let currentIndex = 0;
 
-            function showItem(index) {
-                carouselItems.forEach((item, i) => {
-                    item.style.opacity = i === index ? "1" : "0";
-                });
+            function changeSlide() {
+                slides[currentIndex].classList.remove('opacity-100');
+                slides[currentIndex].classList.add('opacity-0');
+
+                currentIndex = (currentIndex + 1) % slides.length;
+
+                slides[currentIndex].classList.remove('opacity-0');
+                slides[currentIndex].classList.add('opacity-100');
             }
 
-            function nextItem() {
-                currentIndex = (currentIndex + 1) % carouselItems.length;
-                showItem(currentIndex);
-            }
-
-            function prevItem() {
-                currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
-                showItem(currentIndex);
-            }
-
-            // Auto-rotate every 5 seconds
-            setInterval(nextItem, 5000);
-
-            // Manual navigation
-            prevButton.addEventListener("click", prevItem);
-            nextButton.addEventListener("click", nextItem);
-
-            // Show the first item initially
-            showItem(currentIndex);
+            setInterval(changeSlide, 4000); // Change image every 4 seconds
         });
     </script>
-
     
     <!-- JavaScript for Frontend Filtering -->
     <script>

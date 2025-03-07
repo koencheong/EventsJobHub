@@ -1,5 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
+        <!-- Include Flatpickr CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+        <!-- Include Flatpickr JS -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Job') }}
         </h2>
@@ -50,6 +56,37 @@
                             <input type="date" id="end_date" name="end_date" class="mt-2 w-full p-2 border border-gray-300 rounded-lg" value="{{ old('end_date', $event->end_date) }}" required>
                             @error('end_date')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>
+
+                        <!-- Start Time & End Time -->
+                        <div>
+                            <label for="start_time" class="block text-lg font-medium text-gray-800">Start Time</label>
+                            <input type="text" id="start_time" name="start_time" class="mt-2 w-full p-2 border border-gray-300 rounded-lg" value="{{ old('start_time', $event->start_time ) }}" required>
+                            @error('start_time')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label for="end_time" class="block text-lg font-medium text-gray-800">End Time</label>
+                            <input type="text" id="end_time" name="end_time" class="mt-2 w-full p-2 border border-gray-300 rounded-lg" value="{{ old('end_time', $event->end_time ) }}" required>
+                            @error('end_time')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror 
+                        </div>
+
+                        <!-- Initialize Flatpickr -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                flatpickr("#start_time", {
+                                    enableTime: true,        // Enable time selection
+                                    noCalendar: true,        // Disable date selection
+                                    dateFormat: "H:i",       // Time format: Hours:Minutes
+                                    minuteIncrement: 30,     // Set 30-minute increments
+                                });
+
+                                flatpickr("#end_time", {
+                                    enableTime: true,        // Enable time selection
+                                    noCalendar: true,        // Disable date selection
+                                    dateFormat: "H:i",       // Time format: Hours:Minutes
+                                    minuteIncrement: 30,     // Set 30-minute increments
+                                });
+                            });
+                        </script>
 
                         <!-- Location & Payment Amount -->
                         <div>
@@ -102,4 +139,6 @@
             </div>
         </div>
     </div>
+
 </x-app-layout>
+

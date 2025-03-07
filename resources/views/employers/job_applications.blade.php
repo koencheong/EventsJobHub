@@ -19,6 +19,8 @@
                         {{ \Carbon\Carbon::parse($job->start_date)->format('F j, Y') }} - {{ \Carbon\Carbon::parse($job->end_date)->format('F j, Y') }}
                     @endif
                 </p>
+                <p><strong>Time:</strong> 
+                    {{ \Carbon\Carbon::parse($job->start_time)->format('g:i A') }} - {{ \Carbon\Carbon::parse($job->end_time)->format('g:i A') }}
                 <p><strong>Payment Amount:</strong> RM{{ number_format($job->payment_amount, 2) }} / day</p>
                 <p class="md:col-span-2"><strong>Description:</strong> {{ $job->description }}</p>
 			    <div class="mt-5">
