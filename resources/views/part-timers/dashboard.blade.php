@@ -4,8 +4,6 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
         <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
-            <a href="{{ route('jobs.recommended') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
-    Recommended Jobs
 </a>
 
         </h2>
@@ -157,17 +155,24 @@
                     </div>
                 @endif
                 <div class="flex justify-between items-center mt-6 space-x-3">
+                    <!-- Report Issue (Left) -->
                     <a href="{{ route('reports.create') }}" 
-                    class="bg-red-500 text-white px-4 py-2.5 rounded-md text-sm hover:bg-red-600 transition">
+                    class="bg-red-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-red-600 transition">
                         Report Issue
                     </a>
-                    
+
+                    <!-- View Ratings (Center) -->
                     <a href="{{ route('ratings.show', ['userId' => auth()->id()]) }}" 
-                    class="bg-green-500 text-white px-4 py-2.5 rounded-md text-sm hover:bg-green-600 transition">
+                    class="bg-green-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-green-600 transition">
                         View Ratings
                     </a>
-                </div>
 
+                    <!-- Recommended Jobs (Right) -->
+                    <a href="{{ route('jobs.recommended') }}" 
+                    class="bg-blue-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-blue-600 transition">
+                        Recommended Jobs
+                    </a>
+                </div>
             </div>
 
             <script>

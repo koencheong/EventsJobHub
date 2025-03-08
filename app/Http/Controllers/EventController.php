@@ -10,13 +10,37 @@ use App\Notifications\NewJobPosted;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of events.
-     */
     public function index()
     {
         $events = Event::all();
         return view('events.index', compact('events'));
+    }
+
+    /**
+     * Fetch events for FullCalendar.
+     */
+    public function getEvents()
+    {
+        // Fetch approved events
+        $events = Event::where('status', 'approved')->get();
+
+        $formattedEvents = [];
+
+        foreach ($events as $event) {
+            $formattedEvents[] = [
+                'id' => $event->id,
+                'title' => $event->name, // Use the event name as the title
+                'start' => $event->start_date . 'T' . $event->start_time, // Combine date and time
+                'end' => $event->end_date . 'T' . $event->end_time, // Combine date and time
+                'location' => $event->location, // Add location to the event
+                'description' => $event->description, // Add description to the event
+                'color' => $event->status === 'approved' ? '#4CAF50' : '#F44336', // Customize color based on status
+                'url' => '/events/' . $event->id, // Link to event details
+                'allDay' => false, // Ensure events are not treated as all-day events
+            ];
+        }
+
+        return response()->json($formattedEvents);
     }
 
     public function showEventsForPartTimers(Request $request)

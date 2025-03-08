@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-800">
-            Applications for {{ $job->name }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800">Applications for {{ $job->name }}</h2>
+            <a href="{{ route('employer.jobs') }}"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
+                Back
+            </a>
+        </div>
     </x-slot>
 
         <!-- Job Details Section -->
@@ -86,11 +90,27 @@
 
                                         <!-- Rate Part-Timer Button (Visible only for 'completed' or 'paid' status) -->
                                         @if(in_array($application->status, ['completed', 'paid']))
-                                            <a href="{{ route('ratings.create', ['event' => $application->event_id, 'toUser' => $application->user_id, 'type' => 'employer_to_part_timer']) }}" 
-                                            class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
-                                                Rate Part-Timer
-                                            </a>
+                                            @php
+                                                $existingRating = \App\Models\Rating::where([
+                                                    'event_id' => $application->event_id,
+                                                    'to_user_id' => $application->user_id,
+                                                    'from_user_id' => auth()->id(), // Ensure it's the employer's rating
+                                                    'type' => 'employer_to_part_timer'
+                                                ])->exists();
+                                            @endphp
+
+                                            @if(!$existingRating)
+                                                <a href="{{ route('ratings.create', ['event' => $application->event_id, 'toUser' => $application->user_id, 'type' => 'employer_to_part_timer']) }}" 
+                                                class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
+                                                    Rate Part-Timer
+                                                </a>
+                                            @else
+                                                <button class="px-4 py-2 bg-gray-400 text-white rounded-md cursor-not-allowed" disabled>
+                                                    Rated
+                                                </button>
+                                            @endif
                                         @endif
+
 
                                         <!-- Status Update Dropdown -->
                                         <div x-data="{ showModal: false, selectedStatus: '', applicationId: '' }">

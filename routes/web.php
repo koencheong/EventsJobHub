@@ -44,6 +44,8 @@ Route::get('/', [EventController::class, 'showEventsForPartTimers'])->name('home
 Route::resource('events', EventController::class);
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
+Route::get('/events', [EventController::class, 'getEvents']);
+
 // Employer Home
 Route::get('/employer-home', function () {
     return view('employers.employer-home');
@@ -116,6 +118,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/reports/{id}', [AdminController::class, 'deleteReport'])->name('admin.reports.delete');
 });
 
+// Show job details
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 // Messaging Page
@@ -123,19 +126,22 @@ Route::get('/messages', function () {
     return view('chatify.index');
 })->middleware('auth');
 
-
+// Ratings and feedback
 Route::get('/events/{event}/rate/{toUser}/{type}', [RatingController::class, 'create'])->name('ratings.create');
 Route::post('/events/{event}/rate', [RatingController::class, 'store'])->name('events.rate');
 Route::get('/ratings/{userId}', [RatingController::class, 'showRatings'])->name('ratings.show');
 
+// Job recoomendations
 Route::get('/recommended-jobs', [JobApplicationController::class, 'recommendedJobs'])->name('jobs.recommended');
 
+// Employer profile
 Route::middleware(['auth'])->group(function () {
     Route::get('/employer/profile', [EmployerProfileController::class, 'show'])->name('employer.profile.show');
     Route::get('/employer/profile/edit', [EmployerProfileController::class, 'edit'])->name('employer.profile.edit');
     Route::post('/employer/profile/update', [EmployerProfileController::class, 'update'])->name('employer.profile.update');
 });
 
+// Notifications
 Route::patch('/notifications/{id}/read', function ($id) {
     $notification = auth()->user()->notifications()->find($id);
     if ($notification) {
@@ -147,3 +153,15 @@ Route::patch('/notifications/{id}/read', function ($id) {
 Route::get('/notifications', function () {
     return view('notifications.index');
 })->middleware(['auth'])->name('notifications.index');
+
+Route::get('/notifications/unread', function () {
+    return response()->json([
+        'count' => Auth::user()->unreadNotifications->count(),
+        'notifications' => Auth::user()->unreadNotifications,
+    ]);
+})->middleware('auth');
+
+Route::get('/dashboard', [JobApplicationController::class, 'employerDashboard'])
+    ->middleware(['auth'])
+    ->name('dashboard');
+

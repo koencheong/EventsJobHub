@@ -8,6 +8,7 @@ use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewJobApplication;
+use App\Notifications\JobApplicationStatusUpdated;
 
 class JobApplicationController extends Controller
 {
@@ -229,7 +230,7 @@ class JobApplicationController extends Controller
         }
     
         // Prevent status modification if it is already in a final state
-        if (in_array($application->status, ['completed', 'paid', 'canceled'])) {
+        if (in_array($application->status, ['paid', 'canceled'])) {
             return redirect()->back()->with('error', 'You cannot modify this application anymore.');
         }
     
@@ -238,6 +239,9 @@ class JobApplicationController extends Controller
         ]);
     
         $application->update(['status' => $request->status]);
+
+        // Notify the part-timer
+        $application->user->notify(new JobApplicationStatusUpdated($application));
     
         return redirect()->back()->with('success', 'Job status updated successfully.');
     }
@@ -275,6 +279,61 @@ class JobApplicationController extends Controller
     
         return view('events.recommended', compact('recommendedJobs'));
     }
-    
+    public function employerDashboard()
+    {
+        $employerId = Auth::id(); // Get logged-in employer's ID
+
+        // Calculate employer's average rating
+        $averageRating = \App\Models\Rating::where('to_user_id', $employerId)->avg('rating') ?? 0;
+
+        // Count active jobs (approved or ongoing)
+        $activeJobs = Event::where('company_id', $employerId)
+            ->whereIn('status', ['approved', 'ongoing'])
+            ->count();
+
+        // Count total applications for employer's jobs
+        $totalApplications = JobApplication::whereHas('event', function ($query) use ($employerId) {
+            $query->where('company_id', $employerId);
+        })->count();
+
+        // Count pending payments (jobs that are completed but not marked as paid)
+        $pendingPayments = JobApplication::whereHas('event', function ($query) use ($employerId) {
+            $query->where('company_id', $employerId);
+        })->where('status', 'completed')->count();
+
+        // Fetch recent job applications
+        $jobApplications = JobApplication::whereHas('event', function ($query) use ($employerId) {
+            $query->where('company_id', $employerId);
+        })->latest()->take(5)->get();
+
+        // Job status counts for chart
+        $jobStatusCounts = JobApplication::whereHas('event', function ($query) use ($employerId) {
+            $query->where('company_id', $employerId);
+        })->selectRaw('status, COUNT(*) as count')->groupBy('status')->pluck('count', 'status');
+
+        // Fetch events for calendar
+        $events = Event::where('company_id', $employerId)
+            ->where('status', 'approved')
+            ->get(['id', 'name', 'start_date', 'end_date', 'location']);
+
+        // Format events for FullCalendar
+        $eventData = $events->map(function ($event) {
+            return [
+                'id' => $event->id,
+                'title' => $event->name,
+                'start' => $event->start_date,
+                'end' => $event->end_date,
+                'extendedProps' => [
+                    'location' => $event->location,
+                ]
+            ];
+        });
+
+        return view('dashboard', compact(
+            'averageRating', 'activeJobs', 'totalApplications', 'pendingPayments',
+            'jobStatusCounts', 'eventData', 'jobApplications'
+        ));
+    }
+
 
 }

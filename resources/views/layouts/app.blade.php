@@ -41,5 +41,32 @@
         @stack('modals')
 
         @livewireScripts
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if ('{{ auth()->check() }}' === '1') {  // Only run if user is logged in
+                function fetchNotifications() {
+                    fetch('/notifications/unread')
+                        .then(response => response.json())
+                        .then(data => {
+                            let notificationBadge = document.getElementById('notification-badge');
+                            if (data.count > 0) {
+                                notificationBadge.innerText = data.count;
+                                notificationBadge.style.display = 'inline';
+                            } else {
+                                notificationBadge.style.display = 'none';
+                            }
+                        })
+                        .catch(error => console.error('Error fetching notifications:', error));
+                }
+
+                setInterval(fetchNotifications, 10000);
+                fetchNotifications();
+            }
+        });
+    </script>
+
+
+
     </body>
 </html>

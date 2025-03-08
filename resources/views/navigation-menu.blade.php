@@ -4,9 +4,9 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="text-2xl font-semibold text-blue-600">
-                        Event Jobs Hub
-                    </a>
+                    <div class="text-2xl font-semibold text-blue-600">
+                        Event Jobs Hub 
+                    </div>
                 </div>
 
                 <!-- Navigation Links -->
@@ -18,15 +18,19 @@
                             </x-nav-link>
                             
                             <x-nav-link href="{{ route('admin.employers') }}" :active="request()->routeIs('admin.employers')">
-                                {{ __('Manage Employers') }}
+                                {{ __('Employers') }}
                             </x-nav-link>
 
                             <x-nav-link href="{{ route('admin.partTimers') }}" :active="request()->routeIs('admin.partTimers')">
-                                {{ __('Manage Part-Timers') }}
+                                {{ __('Part-Timers') }}
                             </x-nav-link>
 
                             <x-nav-link href="{{ route('admin.jobs') }}" :active="request()->routeIs('admin.jobs')">
-                                {{ __('Manage Jobs') }}
+                                {{ __('Jobs') }}
+                            </x-nav-link>
+
+                            <x-nav-link href="{{ route('admin.jobs') }}" :active="request()->routeIs('admin.jobs')">
+                                {{ __('Reports') }}
                             </x-nav-link>
                         @else
                             <x-nav-link 
@@ -49,7 +53,7 @@
 
                             @if(Auth::user()->role == 'employer')
                                 <x-nav-link href="{{ route('employer.jobs') }}" :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
-                                    {{ __('Job Applications') }}
+                                    {{ __('Manage Jobs') }}
                                 </x-nav-link>
                                 <x-nav-link href="{{ route('employer.profile.show') }}">
                                     {{ __('Profile') }}
@@ -62,7 +66,12 @@
                         </x-nav-link>
                         <!-- Notifications -->
                         <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.index')">
-                            {{ __('Notifications') }}
+                            <div class="relative flex items-center">
+                                <span>{{ __('Notifications') }}</span>
+                                <span id="notification-badge" class="absolute -top-2 -right-6 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full hidden">
+                                    0
+                                </span>
+                            </div>
                         </x-nav-link>
                     @endauth
                 </div>
@@ -104,12 +113,6 @@
                                 <x-dropdown-link href="{{ route('profile.show') }}">
                                     {{ __('Account Settings') }}
                                 </x-dropdown-link>
-
-                                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                    <x-dropdown-link href="{{ route('api-tokens.index') }}">
-                                        {{ __('API Tokens') }}
-                                    </x-dropdown-link>
-                                @endif
 
                                 <div class="border-t border-gray-200"></div>
 

@@ -9,10 +9,14 @@
         <div class="max-w-7xl mx-auto bg-white p-8 rounded-xl shadow-lg">
             <h3 class="text-2xl font-bold text-gray-800 mb-6">Job Listings</h3>
 
+            <!-- Search Bar -->
+            <input type="text" id="searchInput" onkeyup="searchJobs()" placeholder="Search jobs..." 
+                   class="w-full mb-4 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
             @if ($jobs->isEmpty())
                 <p class="text-gray-500">No job postings available.</p>
             @else
-                <table class="w-full border-collapse">
+                <table class="w-full border-collapse" id="jobsTable">
                     <thead>
                         <tr class="bg-gray-50">
                             <th class="p-4 text-left text-gray-700 font-semibold">Title</th>
@@ -22,9 +26,9 @@
                             <th class="p-4 text-center text-gray-700 font-semibold">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach ($jobs as $job)
-                            <tr class="hover:bg-gray-50 transition duration-200">
+                    <tbody id="jobsBody">
+                        @foreach ($jobs->sortByDesc('status') as $job)
+                            <tr class="hover:bg-gray-50 transition duration-200 job-row" data-title="{{ strtolower($job->name) }}" data-employer="{{ strtolower($job->employer->name) }}">
                                 <td class="p-4 border-t border-gray-200">{{ $job->name }}</td>
                                 <td class="p-4 border-t border-gray-200">{{ $job->employer->name }}</td>
                                 <td class="p-4 border-t border-gray-200">{{ $job->created_at->format('M d, Y') }}</td>
@@ -60,6 +64,12 @@
                                         View Details
                                     </a>
 
+                                    <!-- Clear from View Button -->
+                                    <button onclick="clearJob({{ $job->id }})" 
+                                            class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                                        Clear
+                                    </button>
+
                                     <!-- Rejection Reason Modal -->
                                     <div id="rejectModal-{{ $job->id }}" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-50">
                                         <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
@@ -94,13 +104,39 @@
         </div>
     </div>
 
-    <!-- JavaScript for Modal -->
+    <!-- JavaScript -->
     <script>
+        // Open and Close Modals
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
         }
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Clear Job from View
+        function clearJob(jobId) {
+            let row = document.querySelector(`.job-row[data-id="${jobId}"]`);
+            if (row) {
+                row.remove();
+            }
+        }
+
+        // Search Jobs
+        function searchJobs() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll(".job-row");
+
+            rows.forEach(row => {
+                let title = row.dataset.title;
+                let employer = row.dataset.employer;
+
+                if (title.includes(input) || employer.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
         }
     </script>
 </x-app-layout>

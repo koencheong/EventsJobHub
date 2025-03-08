@@ -76,16 +76,20 @@
                 <!-- Event Listings -->
                 <div class="w-3/4">
                     <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Available Event Jobs</h2>
+
+                    @if ($events->isEmpty())
+                        <p class="text-center text-gray-500 text-lg">No event jobs available at the moment. Please check back later!</p>
+                    @else
                     <div id="event-listings" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         @foreach ($events as $event)
                             <div class="event-card bg-white shadow-xl rounded-xl overflow-hidden transition transform hover:shadow-2xl hover:-translate-y-1 duration-300 p-6 h-full flex flex-col justify-between" 
-                                 data-name="{{ $event->name }}" 
-                                 data-job-type="{{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}" 
-                                 data-payment="{{ $event->payment_amount }}" 
-                                 data-start-date="{{ $event->start_date }}" 
-                                 data-end-date="{{ $event->end_date }}"
-                                 data-start-time="{{ $event->start_time }}"
-                                 data-end-time="{{ $event->end_time }}">
+                                data-name="{{ $event->name }}" 
+                                data-job-type="{{ $event->job_type === 'Others' ? $event->other_job_type : $event->job_type }}" 
+                                data-payment="{{ $event->payment_amount }}" 
+                                data-start-date="{{ $event->start_date }}" 
+                                data-end-date="{{ $event->end_date }}"
+                                data-start-time="{{ $event->start_time }}"
+                                data-end-time="{{ $event->end_time }}">
                                 <!-- Image Section with Default Placeholder -->
                                 <div class="relative w-full h-48 bg-gray-200 flex justify-center items-center overflow-hidden rounded-lg">
                                     @php
@@ -94,14 +98,14 @@
 
                                     @if (!empty($photos) && is_array($photos) && count($photos) > 0)
                                         <img src="{{ asset('storage') }}/{{ $photos[0] }}" 
-                                             alt="Event Photo" 
-                                             class="w-full h-full object-cover"
-                                             onerror="this.src='{{ asset('images/default-placeholder.png') }}';">
+                                            alt="Event Photo" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.src='{{ asset('images/default-placeholder.png') }}';">
                                     @else
                                         <!-- Default Placeholder Image (Your PNG Photo) -->
                                         <img src="{{ asset('images/default-placeholder.png') }}" 
-                                             alt="Default Placeholder" 
-                                             class="w-full h-full object-cover">
+                                            alt="Default Placeholder" 
+                                            class="w-full h-full object-cover">
                                     @endif
                                 </div>
 
@@ -132,7 +136,7 @@
                                 </div>
                             </div>
                         @endforeach
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -176,10 +180,10 @@
 
     <!-- Custom Modal for Confirmation -->
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Application</h3>
             <p class="text-gray-600 mb-6">Are you sure you want to apply for this job?</p>
-            <div class="flex justify-end gap-4">
+            <div class="flex justify-center gap-4">
                 <button id="cancelButton" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">Cancel</button>
                 <button id="confirmButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">Confirm</button>
             </div>
@@ -188,10 +192,10 @@
 
     <!-- Custom Modal for Success -->
     <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Application Successful!</h3>
             <p class="text-gray-600 mb-6">Your application has been submitted successfully.</p>
-            <div class="flex justify-end">
+            <div class="flex justify-center">
                 <button id="closeSuccessButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">Close</button>
             </div>
         </div>
@@ -199,10 +203,10 @@
 
     <!-- Custom Modal for Already Applied -->
     <div id="alreadyAppliedModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Already Applied</h3>
             <p class="text-gray-600 mb-6">You have already applied for this job.</p>
-            <div class="flex justify-end">
+            <div class="flex justify-center">
                 <button id="closeAlreadyAppliedButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">Close</button>
             </div>
         </div>
@@ -210,10 +214,10 @@
 
     <!-- Custom Modal for Not a Part-Timer -->
     <div id="notPartTimerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Not a Part-Timer</h3>
             <p class="text-gray-600 mb-6">You must be logged in as a part-timer to apply for this job.</p>
-            <div class="flex justify-end">
+            <div class="flex justify-center">
                 <button id="closeNotPartTimerButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded">Close</button>
             </div>
         </div>

@@ -26,19 +26,45 @@
                                 <td class="border p-3">{{ $employer->name }}</td>
                                 <td class="border p-3">{{ $employer->email }}</td>
                                 <td class="border p-3 text-center">
-                                    <a href="{{ route('admin.employer.view', ['id' => $employer->id]) }}" 
-                                       class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
-                                        View
-                                    </a>
-                                    <form action="{{ route('admin.employer.delete', $employer->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
+                                    <div class="flex justify-center space-x-2">
+                                        <!-- View Button -->
+                                        <a href="{{ route('admin.employer.view', ['id' => $employer->id]) }}" 
+                                           class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow min-w-[90px]">
+                                            View
+                                        </a>
+
+                                        <!-- Delete Button (Opens Modal) -->
+                                        <button onclick="openModal('deleteModal-{{ $employer->id }}')" 
+                                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow min-w-[90px]">
                                             Delete
                                         </button>
-                                    </form>
+                                    </div>
                                 </td>
                             </tr>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div id="deleteModal-{{ $employer->id }}" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black bg-opacity-50">
+                                <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+                                    <div class="p-6">
+                                        <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Delete</h3>
+                                        <p class="text-gray-600 mb-4">Are you sure you want to delete <strong>{{ $employer->name }}</strong>?</p>
+                                        <div class="flex justify-end">
+                                            <button type="button" onclick="closeModal('deleteModal-{{ $employer->id }}')" 
+                                                    class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition mr-2">
+                                                Cancel
+                                            </button>
+                                            <form action="{{ route('admin.employer.delete', $employer->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         @endforeach
                     </tbody>
                 </table>

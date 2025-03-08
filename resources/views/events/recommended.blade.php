@@ -22,6 +22,15 @@
                     @endforeach
                 </div>
             @endif
+
+            <!-- Back Button -->
+            <div class="mt-6">
+                <a href="{{ url()->previous() }}" 
+                   class="inline-block px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md 
+                          hover:bg-gray-600 transition duration-300">
+                    Back
+                </a>
+            </div>
         </div>
     </div>
 </x-app-layout>
