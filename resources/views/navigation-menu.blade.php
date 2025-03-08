@@ -29,7 +29,7 @@
                                 {{ __('Jobs') }}
                             </x-nav-link>
 
-                            <x-nav-link href="{{ route('admin.jobs') }}" :active="request()->routeIs('admin.jobs')">
+                            <x-nav-link href="{{ route('admin.reports') }}" :active="request()->routeIs('admin.reports')">
                                 {{ __('Reports') }}
                             </x-nav-link>
                         @else

@@ -53,6 +53,7 @@
                             <option value="">All</option>
                             <option value="Cashier">Cashier</option>
                             <option value="Promoter">Promoter</option>
+                            <option value="Model">Model</option>
                             <option value="Waiter/Waitress">Waiter/Waitress</option>
                             <option value="Event Crew">Event Crew</option>
                             <option value="Food Crew">Food Crew</option>
@@ -245,46 +246,49 @@
     
     <!-- JavaScript for Frontend Filtering -->
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
         const eventCards = document.querySelectorAll('.event-card');
         const searchInput = document.getElementById('search-input');
-        const clearSearchButton = document.getElementById('clear-search');
         const jobTypeFilter = document.getElementById('job-type-filter');
         const minPayment = document.getElementById('min-payment');
         const maxPayment = document.getElementById('max-payment');
         const startDate = document.getElementById('start-date');
         const endDate = document.getElementById('end-date');
-        const clearFiltersButton = document.getElementById('clear-filters');
+
+        // Define the clear buttons
+        const clearSearchButton = document.getElementById('clear-search');  // Add your button ID
+        const clearFiltersButton = document.getElementById('clear-filters');  // Add your button ID
 
         // Function to filter events
         function filterEvents() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const selectedJobType = jobTypeFilter.value;
+            const searchTerm = searchInput.value.toLowerCase();  // Search term in lowercase
+            const selectedJobType = jobTypeFilter.value;  // Job type filter (no toLowerCase())
             const minPaymentValue = parseFloat(minPayment.value) || 0;
             const maxPaymentValue = parseFloat(maxPayment.value) || Infinity;
             const startDateValue = startDate.value;
             const endDateValue = endDate.value;
 
             eventCards.forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase();
-                const jobType = card.getAttribute('data-job-type');
+                const name = card.getAttribute('data-name').toLowerCase();  // Event name in lowercase for search comparison
+                const jobType = card.getAttribute('data-job-type');  // Job type (no toLowerCase() for filter)
                 const payment = parseFloat(card.getAttribute('data-payment'));
                 const eventStartDate = card.getAttribute('data-start-date');
                 const eventEndDate = card.getAttribute('data-end-date');
 
-                const matchesSearch = name.includes(searchTerm);
-                const matchesJobType = selectedJobType === '' || jobType === selectedJobType;
+                // Check if the event name or job type match the search term
+                const matchesSearch = name.includes(searchTerm) || jobType.toLowerCase().includes(searchTerm);  // Check both name and job type
+                const matchesJobType = selectedJobType === '' || jobType === selectedJobType;  // Filter by selected job type
                 const matchesPayment = payment >= minPaymentValue && payment <= maxPaymentValue;
                 const matchesDate = (!startDateValue || eventStartDate >= startDateValue) && 
-                                (!endDateValue || eventEndDate <= endDateValue);
+                                    (!endDateValue || eventEndDate <= endDateValue);
 
+                // Show or hide the event card based on the filters
                 if (matchesSearch && matchesJobType && matchesPayment && matchesDate) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
             });
-
         }
 
         // Function to clear search input
@@ -301,8 +305,6 @@
             startDate.value = '';
             endDate.value = '';
             filterEvents(); // Reapply filters after clearing
-            
-            console.log("Filters cleared and events updated"); 
         }
 
         // Add event listeners
@@ -315,6 +317,8 @@
         endDate.addEventListener('change', filterEvents);
         clearFiltersButton.addEventListener('click', clearFilters);
     });
+
+
     </script>
 
     <!-- JavaScript for Custom Modals and Application Logic -->

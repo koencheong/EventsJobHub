@@ -27,8 +27,10 @@
                         </tr>
                     </thead>
                     <tbody id="jobsBody">
-                        @foreach ($jobs->sortByDesc('status') as $job)
-                            <tr class="hover:bg-gray-50 transition duration-200 job-row" data-title="{{ strtolower($job->name) }}" data-employer="{{ strtolower($job->employer->name) }}">
+                        @foreach ($jobs->sortByDesc('status')->sortBy(function($job) {
+                            return $job->status == 'pending' ? -1 : 1;
+                        }) as $job)
+                            <tr class="hover:bg-gray-50 transition duration-200 job-row" data-id="{{ $job->id }}" data-title="{{ strtolower($job->name) }}" data-employer="{{ strtolower($job->employer->name) }}">
                                 <td class="p-4 border-t border-gray-200">{{ $job->name }}</td>
                                 <td class="p-4 border-t border-gray-200">{{ $job->employer->name }}</td>
                                 <td class="p-4 border-t border-gray-200">{{ $job->created_at->format('M d, Y') }}</td>
@@ -114,11 +116,11 @@
             document.getElementById(modalId).classList.add('hidden');
         }
 
-        // Clear Job from View
+        // Clear Job from View (does not delete from database)
         function clearJob(jobId) {
             let row = document.querySelector(`.job-row[data-id="${jobId}"]`);
             if (row) {
-                row.remove();
+                row.style.display = "none";  // Hide the row instead of deleting it
             }
         }
 

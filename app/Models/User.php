@@ -89,16 +89,22 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(PartTimerProfile::class, 'user_id');
     }
     
-      // Messages sent by the user
-      public function sentMessages()
-      {
-          return $this->hasMany(ChMessage::class, 'from_id');
-      }
+    // Messages sent by the user
+    public function sentMessages()
+    {
+        return $this->hasMany(ChMessage::class, 'from_id');
+    }
   
-      // Messages received by the user
-      public function receivedMessages()
-      {
-          return $this->hasMany(ChMessage::class, 'to_id');
-      }
+    // Messages received by the user
+    public function receivedMessages()
+    {
+        return $this->hasMany(ChMessage::class, 'to_id');
+    }
+
+    public function employerProfile()
+    {
+        return $this->hasOne(EmployerProfile::class, 'user_id'); // Assuming the foreign key is 'user_id'
+    }
+
 
 }

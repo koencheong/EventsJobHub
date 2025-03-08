@@ -32,13 +32,11 @@
                                            class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow min-w-[90px]">
                                             View
                                         </a>
-
-                                        <!-- Delete Button (Opens Modal) -->
+                                        <!-- Delete Button -->
                                         <button onclick="openModal('deleteModal-{{ $employer->id }}')" 
-                                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow min-w-[90px]">
-                                            Delete
-                                        </button>
-                                    </div>
+                                            class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow min-w-[90px]">
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
 
@@ -64,11 +62,22 @@
                                     </div>
                                 </div>
                             </div>
-
                         @endforeach
                     </tbody>
                 </table>
             @endif
         </div>
     </div>
+    <!-- JavaScript for Modal functionality -->
+    <script>
+        // Open the modal
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        // Close the modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+    </script>
 </x-app-layout>

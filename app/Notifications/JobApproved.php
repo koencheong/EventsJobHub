@@ -30,7 +30,7 @@ class JobApproved extends Notification
             'message' => 'Your job posting has been approved by the admin.',
             'job_id' => $this->job->id,
             'job_title' => $this->job->name,
-            'url' => route('employer.jobs.applications', $this->application->event->id),
+            'url' => route('employer.jobs.applications', $this->job->id),
         ];
     }
 }

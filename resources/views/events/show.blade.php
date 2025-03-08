@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
-            {{ __('Event Details') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800"> {{ __('Event Details') }} </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+    <div class="py-12 bg-blue-50 min-h-screen">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             <!-- Event Details Card -->
             <div class="bg-white shadow-xl rounded-lg p-8">

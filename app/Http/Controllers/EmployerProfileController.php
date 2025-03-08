@@ -54,18 +54,16 @@ class EmployerProfileController extends Controller
             'business_email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'company_logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'company_location' => 'nullable|string|max:255',
+            'company_website' => 'nullable|url|max:255',
+            'social_media' => 'nullable|array',
         ]);
 
         // Update basic details
         $profile->update([
             'company_name' => $request->company_name,
             'industry' => $request->industry,
-            'organization_type' => $request->organization_type,
-            'establishment_year' => $request->establishment_year,
-            'about' => $request->about,
-            'vision' => $request->vision,
             'company_location' => $request->company_location,
-            'team_size' => $request->team_size,
             'phone' => $request->phone,
             'business_email' => $request->business_email,
             'company_website' => $request->company_website,
@@ -81,6 +79,7 @@ class EmployerProfileController extends Controller
             $profile->company_logo = $path;
             $profile->save();
         }
+
         return redirect()->route('employer.profile.show')
             ->with('success', 'Profile updated successfully.');
     }

@@ -24,12 +24,17 @@ class AdminController extends Controller
         return view('admin.employers', compact('employers'));
     }
 
-    // View employer details
+    // AdminController.php
     public function viewEmployer($id)
     {
-        $employer = User::where('id', $id)->where('role', 'employer')->firstOrFail();
+        $employer = User::where('id', $id)
+                        ->where('role', 'employer')
+                        ->with('employerProfile')  // Eager loading the employerProfile
+                        ->firstOrFail();
+                        
         return view('admin.viewEmployer', compact('employer'));
     }
+
 
     // Delete an employer
     public function deleteEmployer($id)
@@ -50,7 +55,12 @@ class AdminController extends Controller
     // View part-timer details
     public function viewPartTimer($id)
     {
-        $partTimer = User::where('id', $id)->where('role', 'part-timer')->firstOrFail();
+        $partTimer = User::where('id', $id)
+                        ->where('role', 'part-timer')
+                        ->with('partTimerProfile') 
+                        ->firstOrFail();
+
+     
         return view('admin.viewPartTimer', compact('partTimer'));
     }
 
