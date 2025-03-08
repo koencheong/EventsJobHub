@@ -11,12 +11,9 @@
                 
                 <!-- Profile Header -->
                 <div class="flex items-center space-x-6 mb-8">
-                    <!-- Fake Profile Photo -->
-                    <div class="w-24 h-24 overflow-hidden rounded-full shadow-lg">
-                        <img src="https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg" 
-                             alt="Profile Photo" 
-                             class="w-full h-full object-cover">
-                    </div>
+                    <img class="w-20 h-20 rounded-full object-cover" 
+                         src="{{ Auth::user()->profile_photo_url }}" 
+                         alt="{{ Auth::user()->name }}" />
                     <!-- Name and Bio -->
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900">{{ $profile->full_name }}</h3>

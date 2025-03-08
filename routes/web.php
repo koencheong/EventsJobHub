@@ -81,6 +81,9 @@ Route::get('/part-timers/{id}', [PartTimerProfileController::class, 'show'])
     ->middleware(['auth'])
     ->name('part-timers.show');
 
+// Show job details
+Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
 Route::patch('/applications/{application}', [JobApplicationController::class, 'updateStatus'])
     ->middleware(['auth'])
     ->name('application.update');
@@ -117,9 +120,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/reports/{id}', [AdminController::class, 'viewReport'])->name('admin.reports.view');
     Route::delete('/reports/{id}', [AdminController::class, 'deleteReport'])->name('admin.reports.delete');
 });
-
-// Show job details
-Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
 // Messaging Page
 Route::get('/messages', function () {

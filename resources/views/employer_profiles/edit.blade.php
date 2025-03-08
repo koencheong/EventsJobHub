@@ -12,19 +12,6 @@
                     @csrf
                     @method('POST')
 
-                    <!-- Company Logo -->
-                    <div class="mb-6">
-                        <label class="block text-gray-700 font-semibold mb-2">Company Logo</label>
-                        <input type="file" name="company_logo" class="border border-gray-300 rounded-lg p-2 w-full">
-                        @if ($profile->company_logo)
-                            <div class="mt-4">
-                                <img src="{{ asset('storage/' . $profile->company_logo) }}"
-                                     alt="{{ $profile->company_name }} Logo"
-                                     class="w-28 h-28 object-cover rounded-full shadow-xl border-2 border-gray-300">
-                            </div>
-                        @endif
-                    </div>
-
                     <!-- Company Name -->
                     <div class="mb-6">
                         <label class="block text-gray-700 font-semibold mb-2">Company Name</label>

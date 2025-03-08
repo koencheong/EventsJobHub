@@ -144,7 +144,7 @@
                 },
                 events: @json($eventData),
                 eventClick: function(info) {
-                    window.location.href = `/event-details/${info.event.id}`;
+                    window.location.href = `/events/${info.event.id}`;
                 },
                 eventContent: function(arg) {
                     return {

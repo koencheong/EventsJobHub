@@ -16,18 +16,9 @@
             <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
                 <!-- Profile Header -->
                 <div class="flex items-center space-x-6 mb-12 border-b border-gray-200 pb-6">
-                    <!-- Company Logo -->
-                    @if ($profile->company_logo)
-                        <div class="w-28 h-28 overflow-hidden rounded-full shadow-xl border-2 border-gray-300">
-                            <img src="{{ asset('storage/' . $profile->company_logo) }}"
-                                 alt="{{ $profile->company_name }} Logo"
-                                 class="w-full h-full object-cover">
-                        </div>
-                    @else
-                        <div class="w-28 h-28 overflow-hidden rounded-full shadow-xl bg-gray-200 flex items-center justify-center border-2 border-gray-300">
-                            <span class="text-gray-500 text-xl font-semibold">No Logo</span>
-                        </div>
-                    @endif
+                    <img class="w-20 h-20 rounded-full object-cover" 
+                         src="{{ Auth::user()->profile_photo_url }}" 
+                         alt="{{ Auth::user()->name }}" />
 
                     <!-- Company Name and Basic Info -->
                     <div>
