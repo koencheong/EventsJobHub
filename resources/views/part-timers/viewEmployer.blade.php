@@ -1,137 +1,120 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800"> {{ __('Employer Profile') }} </h2>
+            <h2 class="font-semibold text-xl text-gray-800">{{ __('Employer Details') }}</h2>
         </div>
     </x-slot>
 
-    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+    <div class="py-12 bg-blue-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
-                <!-- Profile Header -->
+                <!-- Employer Information Header -->
                 <div class="flex items-center justify-between space-x-6 mb-12 border-b border-gray-200 pb-6">
                     <div class="flex items-center space-x-6">
-                        <img class="w-20 h-20 rounded-full object-cover" 
-                             src="{{ Auth::user()->profile_photo_url }}" 
-                             alt="{{ Auth::user()->name }}" />
-
-                        <!-- Company Name and Basic Info -->
+                        <!-- Employer Avatar (Optional) -->
+                        <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-blue-600">{{ substr($profile->company_name, 0, 1) }}</span>
+                        </div>
+                        <!-- Employer Name and Industry -->
                         <div>
                             <h1 class="text-4xl font-bold text-gray-800">{{ $profile->company_name }}</h1>
                             <p class="text-gray-600 mt-2 text-lg">{{ $profile->industry }}</p>
                         </div>
                     </div>
                     <!-- View Ratings Button -->
-                    <a href="{{ route('ratings.show', ['userId' => $profile->user_id]) }}" 
+                    <a href="{{ route('ratings.show', ['userId' => $profile->id]) }}" 
                        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
                         View Ratings
                     </a>
                 </div>
 
-                <!-- Company Details -->
+                <!-- Employer Details -->
                 <div class="mb-12">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Company Details</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Employer Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Phone -->
+                        <!-- Name -->
                         <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex items-center space-x-4">
                                 <div class="text-2xl text-blue-600">
-                                    <i class="bi bi-telephone"></i> <!-- Bootstrap Phone Icon -->
+                                    <i class="bi bi-person"></i> <!-- Bootstrap Person Icon -->
                                 </div>
                                 <div>
-                                    <h4 class="text-gray-700 font-semibold">Phone</h4>
-                                    <p class="text-gray-900 text-lg">{{ $profile->phone ?? 'Not specified' }}</p>
+                                    <h4 class="text-gray-700 font-semibold">Name</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->company_name }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Business Email -->
+                        <!-- Email -->
                         <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex items-center space-x-4">
                                 <div class="text-2xl text-purple-600">
                                     <i class="bi bi-envelope"></i> <!-- Bootstrap Email Icon -->
                                 </div>
                                 <div>
-                                    <h4 class="text-gray-700 font-semibold">Business Email</h4>
-                                    <p class="text-gray-900 text-lg">{{ $profile->business_email ?? 'Not specified' }}</p>
+                                    <h4 class="text-gray-700 font-semibold">Email</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->business_email }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Company Website -->
+                        <!-- Phone -->
                         <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex items-center space-x-4">
                                 <div class="text-2xl text-green-600">
+                                    <i class="bi bi-telephone"></i> <!-- Bootstrap Phone Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Phone</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->phone }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Website -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-blue-600">
                                     <i class="bi bi-globe"></i> <!-- Bootstrap Website Icon -->
                                 </div>
                                 <div>
                                     <h4 class="text-gray-700 font-semibold">Website</h4>
                                     <p class="text-gray-900 text-lg">
-                                        @if ($profile->company_website)
-                                            <a href="{{ $profile->company_website }}" class="text-blue-600 hover:text-blue-700 transition duration-200" target="_blank">{{ $profile->company_website }}</a>
-                                        @else
-                                            Not specified
-                                        @endif
+                                        <a href="{{ $profile->company_website }}" 
+                                           class="text-blue-600 hover:text-blue-700 transition duration-200" 
+                                           target="_blank">{{ $profile->company_website }}</a>
                                     </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-purple-600">
+                                    <i class="bi bi-geo-alt"></i> <!-- Bootstrap Location Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Location</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->company_location }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Industry -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-green-600">
+                                    <i class="bi bi-briefcase"></i> <!-- Bootstrap Briefcase Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Industry</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->industry }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Social Media Links (Optional) -->
-                @if (!empty($profile->social_media))
-                <div class="mb-12">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Social Media</h2>
-                    <div class="p-6 bg-gray-50 rounded-xl shadow-md border border-gray-200 hover:shadow-xl transition-shadow duration-200">
-                        @php
-                            $socialMediaLinks = json_decode($profile->social_media, true);
-                        @endphp
-                        <div class="space-y-4">
-                            @if (!empty($socialMediaLinks['facebook']))
-                                <div class="flex items-center gap-4">
-                                    <i class="bi bi-facebook text-3xl text-blue-600"></i> <!-- Facebook Logo -->
-                                    <a href="{{ $socialMediaLinks['facebook'] }}" target="_blank" class="text-blue-600 hover:text-blue-700 transition duration-200">
-                                        {{ $socialMediaLinks['facebook'] }}
-                                    </a>
-                                </div>
-                            @endif
-                            @if (!empty($socialMediaLinks['instagram']))
-                                <div class="flex items-center gap-4">
-                                    <i class="bi bi-instagram text-3xl text-pink-600"></i> <!-- Instagram Logo -->
-                                    <a href="{{ $socialMediaLinks['instagram'] }}" target="_blank" class="text-pink-600 hover:text-pink-700 transition duration-200">
-                                        {{ $socialMediaLinks['instagram'] }}
-                                    </a>
-                                </div>
-                            @endif
-                            @if (!empty($socialMediaLinks['linkedin']))
-                                <div class="flex items-center gap-4">
-                                    <i class="bi bi-linkedin text-3xl text-blue-500"></i> <!-- LinkedIn Logo -->
-                                    <a href="{{ $socialMediaLinks['linkedin'] }}" target="_blank" class="text-blue-500 hover:text-blue-600 transition duration-200">
-                                        {{ $socialMediaLinks['linkedin'] }}
-                                    </a>
-                                </div>
-                            @endif
-                            @if (!empty($socialMediaLinks['twitter']))
-                                <div class="flex items-center gap-4">
-                                    <i class="bi bi-twitter text-3xl text-blue-400"></i> <!-- Twitter Logo -->
-                                    <a href="{{ $socialMediaLinks['twitter'] }}" target="_blank" class="text-blue-400 hover:text-blue-500 transition duration-200">
-                                        {{ $socialMediaLinks['twitter'] }}
-                                    </a>
-                                </div>
-                            @endif
-                            @if (!empty($socialMediaLinks['youtube']))
-                                <div class="flex items-center gap-4">
-                                    <i class="bi bi-youtube text-3xl text-red-600"></i> <!-- YouTube Logo -->
-                                    <a href="{{ $socialMediaLinks['youtube'] }}" target="_blank" class="text-red-600 hover:text-red-700 transition duration-200">
-                                        {{ $socialMediaLinks['youtube'] }}
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endif
 
                 <!-- Company Location with Google Maps -->
                 <div class="mb-12">
@@ -151,21 +134,14 @@
                     </div>
                 </div>
 
-				@php
-					$previousUrl = url()->previous();
-					$ratingsUrl = route('ratings.show', ['userId' => $profile->user_id]);
-					
-					// If coming from the ratings page, set a fallback to employer list
-					if ($previousUrl === $ratingsUrl) {
-						$previousUrl = route('part-timers.dashboard');
-					}
-				@endphp		
-				<div class="mt-6 text-center">
-					<a href="{{ $previousUrl }}"
-					class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto">
-						Back
-					</a>
-            	</div>
+                <!-- Back Button -->
+                <div class="mt-6 text-center">
+                    <a href="{{ route('admin.employers') }}" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
+                        Back
+                    </a>
+                </div>
+                
             </div>
         </div>
     </div>

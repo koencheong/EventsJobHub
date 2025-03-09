@@ -14,11 +14,21 @@
                     <h1 class="text-3xl font-bold text-gray-900">{{ $event->name }}</h1>
 
                     <!-- View Employer Button -->
-                    <a href="{{ route('part-timers.viewEmployer', ['userId' => $event->company_id]) }}" 
-                    class="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md 
-                            hover:bg-purple-600 transition duration-300 ease-in-out inline-block">
-                        View Employer
-                    </a>
+                    @if (auth()->check())
+                        @if (auth()->user()->role === 'part-timer')
+                            <a href="{{ route('part-timers.viewEmployer', ['userId' => $event->company_id]) }}" 
+                            class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                                    hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
+                                View Employer
+                            </a>
+                        @elseif (auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.employer.view', ['id' => $event->company_id]) }}" 
+                            class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                                    hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
+                                View Employer
+                            </a>
+                        @endif
+                    @endif
                 </div>
 
 
