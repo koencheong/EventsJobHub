@@ -1,72 +1,79 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
-            {{ __('My Profile') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800"> {{ __('My Profile') }} </h2>
+            <a href="{{ route('profile.edit') }}" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
+                Edit Profile
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-blue-100 shadow-xl rounded-lg p-8">
-                
+            <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
                 <!-- Profile Header -->
-                <div class="flex items-center space-x-6 mb-8">
-                    <img class="w-20 h-20 rounded-full object-cover" 
-                         src="{{ Auth::user()->profile_photo_url }}" 
-                         alt="{{ Auth::user()->name }}" />
-                    <!-- Name and Bio -->
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900">{{ $profile->full_name }}</h3>
-                        <p class="text-gray-600 italic">{{ $profile->bio ?? 'No bio available' }}</p>
+                <div class="flex items-center justify-between space-x-6 mb-12 border-b border-gray-200 pb-6">
+                    <div class="flex items-center space-x-6">
+                        <img class="w-20 h-20 rounded-full object-cover" 
+                             src="{{ Auth::user()->profile_photo_url }}" 
+                             alt="{{ Auth::user()->name }}" />
+                        <!-- Name and Bio -->
+                        <div>
+                            <h1 class="text-4xl font-bold text-gray-800">{{ $profile->full_name }}</h1>
+                            <p class="text-gray-600 mt-2 text-lg">{{ $profile->bio ?? 'No bio available' }}</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Profile Details -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <!-- Phone -->
-                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center space-x-4">
-                            <div class="text-2xl text-blue-600">
-                                <i class="bi bi-telephone"></i> <!-- Bootstrap Phone Icon -->
-                            </div>
-                            <div>
-                                <h4 class="text-gray-700 font-semibold">Phone</h4>
-                                <p class="text-gray-900 text-lg">{{ $profile->phone ?? 'Not specified' }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Location -->
-                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center space-x-4">
-                            <div class="text-2xl text-purple-600">
-                                <i class="bi bi-geo-alt"></i> <!-- Bootstrap Location Icon -->
-                            </div>
-                            <div>
-                                <h4 class="text-gray-700 font-semibold">Location</h4>
-                                <p class="text-gray-900 text-lg">{{ $profile->location ?? 'Not specified' }}</p>
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Profile Details</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Phone -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-blue-600">
+                                    <i class="bi bi-telephone"></i> <!-- Bootstrap Phone Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Phone</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->phone ?? 'Not specified' }}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Work Experience -->
-                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <div class="flex items-center space-x-4">
-                            <div class="text-2xl text-green-600">
-                                <i class="bi bi-briefcase"></i> <!-- Bootstrap Work Experience Icon -->
+                        <!-- Location -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-purple-600">
+                                    <i class="bi bi-geo-alt"></i> <!-- Bootstrap Location Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Location</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->location ?? 'Not specified' }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="text-gray-700 font-semibold">Work Experience</h4>
-                                <p class="text-gray-900 text-lg">{{ $profile->work_experience ?? 'No experience added' }}</p>
+                        </div>
+
+                        <!-- Work Experience -->
+                        <div class="p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-2xl text-green-600">
+                                    <i class="bi bi-briefcase"></i> <!-- Bootstrap Work Experience Icon -->
+                                </div>
+                                <div>
+                                    <h4 class="text-gray-700 font-semibold">Work Experience</h4>
+                                    <p class="text-gray-900 text-lg">{{ $profile->work_experience ?? 'No experience added' }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Work Photos -->
-                <div class="mt-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Previous Work Photos</h3>
-                    
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Previous Work Photos</h2>
                     @php
                         $workPhotos = is_array($profile->work_photos) ? $profile->work_photos : json_decode($profile->work_photos ?? '[]', true);
                     @endphp
@@ -85,21 +92,6 @@
                     @else
                         <p class="text-gray-600 italic">No photos uploaded</p>
                     @endif
-                </div>
-
-                   <!-- Ratings and Feedback Section -->
-                   <a href="{{ route('ratings.show', ['userId' => auth()->id()]) }}" 
-                    class="bg-green-500 text-white px-4 py-2.5 rounded-md text-sm hover:bg-green-600 transition">
-                        View Ratings
-                    </a>
-                </div>
-
-                <!-- Edit Button -->
-                <div class="mt-8 text-center">
-                    <a href="{{ route('profile.edit') }}" 
-                       class="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out">
-                    Edit Profile
-                    </a>
                 </div>
             </div>
         </div>

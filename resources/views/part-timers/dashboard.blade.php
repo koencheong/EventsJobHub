@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-        <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-</a>
-
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800"> {{ __('Dashboard') }} </h2>
+            <a href="{{ route('ratings.show', ['userId' => auth()->id()]) }}" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
+                        View All Ratings
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
@@ -18,7 +18,7 @@
                         ['title' => 'Total Applications', 'value' => $applications->count(), 'color' => 'text-indigo-600', 'icon' => 'bi bi-file-earmark-text'],
                         ['title' => 'Completed Jobs', 'value' => $completedJobs, 'color' => 'text-green-600', 'icon' => 'bi bi-check-circle'],
                         ['title' => 'Upcoming Jobs', 'value' => $upcomingJobs, 'color' => 'text-blue-600', 'icon' => 'bi bi-calendar-event'],
-                        ['title' => 'Earnings This Month', 'value' => 'RM ' . number_format($totalEarnings, 2), 'color' => 'text-yellow-600', 'icon' => 'bi bi-currency-dollar']
+                        ['title' => 'Earnings This Month', 'value' => 'RM ' . number_format($totalEarnings, 2), 'color' => 'text-yellow-600', 'icon' => 'bi bi-cash-coin']
                     ];
                 @endphp
                 
@@ -41,7 +41,7 @@
                     <h3 class="text-xl font-semibold">My Job Applications</h3>
                     
                     <!-- Sorting Dropdown -->
-                    <select id="sortApplications" class="border-gray-300 rounded-lg text-gray-700 px-4 py-2 bg-white shadow-sm">
+                    <select id="sortApplications" class="border-gray-300 rounded-lg text-gray-700 px-7 py-2 bg-white shadow-sm">
                         <option value="date">Sort by Applied Date</option>
                         <option value="name">Sort by Event Name</option>
                         <option value="status">Sort by Status</option>
@@ -131,23 +131,31 @@
                                                 </button>
                                             @endif
                                         @elseif ($application->status == 'pending')
-                                            <form action="{{ route('applications.cancel', $application->id) }}" method="POST">
+                                            <form action="{{ route('applications.cancel', $application->id) }}" method="POST" id="cancelForm-{{ $application->id }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
+                                                <button type="button" onclick="showCancelConfirmation('{{ $application->id }}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
                                                     Cancel
                                                 </button>
                                             </form>
                                         @elseif ($application->status == 'canceled')
-                                            <form action="{{ route('applications.delete', $application->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application?');">
+                                            <form action="{{ route('applications.delete', $application->id) }}" method="POST" id="deleteForm-{{ $application->id }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
+                                                <button type="button" onclick="showDeleteConfirmation('{{ $application->id }}')" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
                                                     Delete
                                                 </button>
                                             </form>
+                                        @elseif ($application->status == 'rejected')
+                                            <button type="button" onclick="clearApplication('{{ $application->id }}')" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 text-sm font-medium rounded-lg transition">
+                                                Clear
+                                            </button>
+                                        @elseif ($application->status == 'approved')
+                                            <span class="text-green-600 font-medium">You're all set! Have fun at work! 🎉</span>
+                                        @elseif ($application->status == 'completed')
+                                            <span class="text-yellow-600 font-medium">Great job! Now just sit back and wait for your payment. 💰</span>
                                         @endif
-                                    </td>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -161,17 +169,35 @@
                         Report Issue
                     </a>
 
-                    <!-- View Ratings (Center) -->
-                    <a href="{{ route('ratings.show', ['userId' => auth()->id()]) }}" 
-                    class="bg-green-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-green-600 transition">
-                        View Ratings
-                    </a>
-
                     <!-- Recommended Jobs (Right) -->
                     <a href="{{ route('jobs.recommended') }}" 
-                    class="bg-blue-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-blue-600 transition">
+                    class="bg-green-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-green-600 transition">
                         Recommended Jobs
                     </a>
+                </div>
+            </div>
+
+            <!-- Custom Modal for Cancel Confirmation -->
+            <div id="cancelConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+                <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Cancellation</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to cancel this application?</p>
+                    <div class="flex justify-center gap-4">
+                        <button id="cancelModalButton" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">No</button>
+                        <button id="confirmCancelButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded">Yes, Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Modal for Delete Confirmation -->
+            <div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+                <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center text-center">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this application?</p>
+                    <div class="flex justify-center gap-4">
+                        <button id="deleteModalButton" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded">No</button>
+                        <button id="confirmDeleteButton" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded">Yes, Delete</button>
+                    </div>
                 </div>
             </div>
 
@@ -215,6 +241,41 @@
                         rows.forEach(row => table.appendChild(row));
                     });
                 });
+
+                // Function to show the cancel confirmation modal
+                function showCancelConfirmation(applicationId) {
+                    const modal = document.getElementById('cancelConfirmationModal');
+                    modal.classList.remove('hidden');
+
+                    // Set up the confirm button
+                    document.getElementById('confirmCancelButton').onclick = function() {
+                        document.getElementById(`cancelForm-${applicationId}`).submit();
+                        modal.classList.add('hidden');
+                    };
+
+                    // Set up the cancel button
+                    document.getElementById('cancelModalButton').onclick = function() {
+                        modal.classList.add('hidden');
+                    };
+                }
+
+                function showDeleteConfirmation(applicationId) {
+                    const modal = document.getElementById('deleteConfirmationModal');
+                    modal.classList.remove('hidden');
+
+                    // Set up the confirm button
+                    document.getElementById('confirmDeleteButton').onclick = function() {
+                        document.getElementById(`deleteForm-${applicationId}`).submit();
+                        modal.classList.add('hidden');
+                    };
+
+                    // Set up the cancel button
+                    document.getElementById('deleteModalButton').onclick = function() {
+                        modal.classList.add('hidden');
+                    };
+                }
+
+                
             </script>
 
             <!-- Earnings Chart -->

@@ -11,20 +11,11 @@ use Chatify\Http\Controllers\MessagesController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\EmployerProfileController;
 
-
 // Dashboard Route (Authenticated Users)
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Role-Based Redirect Route
+Route::middleware(['auth'])->group(function () {
     Route::get('/redirect', function () {
         $user = Auth::user();
-    
+
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard'); // Admin Panel
         } elseif ($user->role === 'employer') {
@@ -32,10 +23,15 @@ Route::middleware([
         } elseif ($user->role === 'part_timer') {
             return redirect()->route('part-timers.dashboard'); // Part-Timer Dashboard
         } else {
-            return redirect('/'); // Default fallback (or change this)
+            return redirect('/'); // Default fallback
         }
     })->name('redirect');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [JobApplicationController::class, 'employerDashboard'])->name('dashboard');
+});
+
 
 // Home Route (Dynamic Events for Part-Timers)
 Route::get('/', [EventController::class, 'showEventsForPartTimers'])->name('home');
@@ -161,7 +157,5 @@ Route::get('/notifications/unread', function () {
     ]);
 })->middleware('auth');
 
-Route::get('/dashboard', [JobApplicationController::class, 'employerDashboard'])
-    ->middleware(['auth'])
-    ->name('dashboard');
-
+Route::get('/employers/{userId}', [EmployerProfileController::class, 'viewEmployer'])
+    ->name('part-timers.viewEmployer');

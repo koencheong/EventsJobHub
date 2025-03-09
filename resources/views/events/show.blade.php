@@ -10,7 +10,17 @@
             <!-- Event Details Card -->
             <div class="bg-white shadow-xl rounded-lg p-8">
                 <!-- Event Name -->
-                <h1 class="text-3xl font-bold text-gray-900 mb-6">{{ $event->name }}</h1>
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold text-gray-900">{{ $event->name }}</h1>
+
+                    <!-- View Employer Button -->
+                    <a href="{{ route('part-timers.viewEmployer', ['userId' => $event->company_id]) }}" 
+                    class="px-6 py-3 bg-purple-500 text-white font-semibold rounded-lg shadow-md 
+                            hover:bg-purple-600 transition duration-300 ease-in-out inline-block">
+                        View Employer
+                    </a>
+                </div>
+
 
                 <!-- Event Details Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -136,6 +146,7 @@
                                 hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
                             Back to Dashboard
                         </a>
+
                         <!-- Message Employer Button -->
                         <a href="{{ url('/chatify/' . $event->company_id) }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
@@ -161,14 +172,6 @@
                             Back
                         </a>
                     @endif
-                @else
-                @php
-                dd("test");
-                <a href="{{ route('home') }}" 
-                class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
-                        hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
-                    Back
-                </a>
                 @endif
             </div>
         </div>

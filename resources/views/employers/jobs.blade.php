@@ -9,7 +9,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
                 <!-- Pending Jobs Section -->
@@ -100,7 +100,7 @@
 
                 <!-- Completed Jobs Section -->
                 <div class="mb-10">
-                    <h3 class="text-2xl font-semibold text-blue-700 mb-4">Completed Jobs</h3>
+                    <h3 class="text-2xl font-semibold text-blue-700 mb-4">Completed Jobs Awaiting Payment</h3>
                     <div class="overflow-x-auto rounded-xl shadow-sm border border-blue-200">
                         <table class="min-w-full bg-white">
                             <thead class="bg-blue-50 text-blue-800 uppercase text-xs font-semibold">
@@ -113,7 +113,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-blue-100">
-                                @forelse($jobs->where('status', 'approved')->filter(fn($job) => $job->applications->where('status', 'paid')->isNotEmpty()) as $job)
+                                @forelse($jobs->where('status', 'approved')->filter(fn($job) => $job->applications->where('status', 'completed')->isNotEmpty()) as $job)
                                     <tr class="hover:bg-blue-50 transition duration-150">
                                         <td class="py-4 px-6 text-gray-800">{{ $job->name }}</td>
                                         <td class="py-4 px-6 text-gray-800">{{ $job->job_type === 'Others' ? $job->other_job_type : $job->job_type }}</td>
@@ -177,7 +177,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full border-t-4 border-red-500 transform transition-all duration-300 scale-95">
+        <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full transform transition-all duration-300 scale-95">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Deletion</h3>
             <p class="text-gray-600 mb-6">Are you sure you want to delete this job? This action cannot be undone.</p>
             <div class="flex justify-end gap-4">

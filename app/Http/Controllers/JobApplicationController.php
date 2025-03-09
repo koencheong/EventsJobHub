@@ -50,7 +50,6 @@ class JobApplicationController extends Controller
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
-    
 
     public function partTimerDashboard()
     {
@@ -279,6 +278,7 @@ class JobApplicationController extends Controller
     
         return view('events.recommended', compact('recommendedJobs'));
     }
+
     public function employerDashboard()
     {
         $employerId = Auth::id(); // Get logged-in employer's ID

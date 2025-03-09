@@ -113,17 +113,25 @@
 
 
                                         <!-- Status Update Dropdown -->
-                                        <div x-data="{ showModal: false, selectedStatus: '', applicationId: '' }">
-                                            <select @change="selectedStatus = $event.target.value; applicationId = {{ $application->id }}; showModal = true;" 
+                                        <!-- Status Update Dropdown -->
+                                        <div x-data="{ showModal: false, selectedStatus: '', applicationId: '', currentStatus: '{{ $application->status }}' }">
+                                            <select 
+                                                @change="selectedStatus = $event.target.value; applicationId = {{ $application->id }}; showModal = true;" 
                                                 class="appearance-none border px-9 py-2 rounded-md bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-200 cursor-pointer text-gray-700"
-                                                {{ in_array($application->status, ['paid', 'rejected', 'canceled']) ? 'disabled' : '' }}>
-                                                <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                                <option value="approved" {{ $application->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                                                <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                                <option value="completed" {{ $application->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                                <option value="paid" {{ $application->status == 'paid' ? 'selected' : '' }}>Paid</option>
+                                                :disabled="currentStatus === 'rejected' || currentStatus === 'paid'">
+                                                
+                                                <!-- Pending: Can choose Approved or Rejected -->
+                                                <option value="pending" :disabled="!(currentStatus === 'pending')" :selected="currentStatus === 'pending'">Pending</option>
+                                                <option value="approved" :disabled="!(currentStatus === 'pending')" :selected="currentStatus === 'approved'">Approved</option>
+                                                <option value="rejected" :disabled="!(currentStatus === 'pending')" :selected="currentStatus === 'rejected'">Rejected</option>
+                                                
+                                                <!-- Approved: Can choose Completed -->
+                                                <option value="completed" :disabled="!(currentStatus === 'approved')" :selected="currentStatus === 'completed'">Completed</option>
+                                                
+                                                <!-- Completed: Can choose Paid -->
+                                                <option value="paid" :disabled="!(currentStatus === 'completed')" :selected="currentStatus === 'paid'">Paid</option>
                                             </select>
-
+                                            
                                             <!-- Modal for Confirmation -->
                                             <div x-show="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                                                 <div class="bg-white p-6 rounded-lg shadow-lg w-96">

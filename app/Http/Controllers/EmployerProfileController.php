@@ -83,4 +83,16 @@ class EmployerProfileController extends Controller
         return redirect()->route('employer.profile.show')
             ->with('success', 'Profile updated successfully.');
     }
+
+    public function viewEmployer($userId)
+    {
+        $profile = EmployerProfile::where('user_id', $userId)->first();
+    
+        if (!$profile) {
+            return redirect()->back()->with('error', 'Employer profile not found.');
+        }
+    
+        return view('part-timers.viewEmployer', compact('profile'));
+    }
+    
 }

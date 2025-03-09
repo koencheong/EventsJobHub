@@ -35,13 +35,13 @@
                         @else
                             <x-nav-link 
                                 href="{{ Auth::user()->role == 'employer' ? route('employer-home') : route('home') }}" 
-                                :active="false">
+                                :active="request()->routeIs(Auth::user()->role == 'employer' ? 'employer-home' : 'home')">
                                 {{ __('Home') }}
                             </x-nav-link>
 
                             <x-nav-link 
                                 href="{{ Auth::user()->role == 'employer' ? route('dashboard') : route('part-timers.dashboard') }}" 
-                                :active="request()->routeIs(Auth::user()->role == 'part_timer' ? 'part-timers.dashboard' : 'dashboard')">
+                                :active="request()->routeIs('dashboard') || request()->routeIs('part-timers.dashboard')">
                                 {{ __('Dashboard') }}
                             </x-nav-link>
 
@@ -55,7 +55,7 @@
                                 <x-nav-link href="{{ route('employer.jobs') }}" :active="request()->routeIs('employer.jobs') || request()->routeIs('employer.jobs.applications')">
                                     {{ __('Manage Jobs') }}
                                 </x-nav-link>
-                                <x-nav-link href="{{ route('employer.profile.show') }}">
+                                <x-nav-link href="{{ route('employer.profile.show') }}" :active="request()->routeIs('employer.profile.show')">
                                     {{ __('Profile') }}
                                 </x-nav-link>
                             @endif

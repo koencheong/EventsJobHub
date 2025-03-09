@@ -9,90 +9,95 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
-                <!-- Stats Grid -->
-                <div class="mb-10">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Overview</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                        <div class="p-6 bg-white shadow-lg rounded-xl flex flex-col justify-between min-h-[140px] border border-gray-100 hover:shadow-xl transition-shadow duration-200">
-                            <h2 class="text-lg font-semibold text-gray-600">Average Rating</h2>
-                            <p class="text-3xl font-bold text-gray-900">{{ number_format($averageRating, 1) }}</p>
+            <!-- Stats Cards Section -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                @php
+                    $stats = [
+                        ['title' => 'Average Rating', 'value' => number_format($averageRating, 1), 'color' => 'text-indigo-600', 'icon' => 'bi bi-star-fill'],
+                        ['title' => 'Active Jobs', 'value' => $activeJobs, 'color' => 'text-green-600', 'icon' => 'bi bi-briefcase-fill'],
+                        ['title' => 'Total Applications', 'value' => $totalApplications, 'color' => 'text-blue-600', 'icon' => 'bi bi-file-earmark-text-fill'],
+                        ['title' => 'Pending Payments', 'value' => $pendingPayments, 'color' => 'text-yellow-600', 'icon' => 'bi bi-cash-coin']
+                    ];
+                @endphp
+                
+                @foreach ($stats as $stat)
+                    <div class="p-6 bg-white shadow-xl rounded-lg flex items-center space-x-4 transition hover:shadow-2xl hover:-translate-y-1">
+                        <div class="text-4xl {{ $stat['color'] }}">
+                            <i class="{{ $stat['icon'] }}"></i> <!-- Bootstrap Icon -->
                         </div>
-                        <div class="p-6 bg-white shadow-lg rounded-xl flex flex-col justify-between min-h-[140px] border border-gray-100 hover:shadow-xl transition-shadow duration-200">
-                            <h2 class="text-lg font-semibold text-gray-600">Active Jobs</h2>
-                            <p class="text-3xl font-bold text-gray-900">{{ $activeJobs }}</p>
-                        </div>
-                        <div class="p-6 bg-white shadow-lg rounded-xl flex flex-col justify-between min-h-[140px] border border-gray-100 hover:shadow-xl transition-shadow duration-200">
-                            <h2 class="text-lg font-semibold text-gray-600">Total Applications</h2>
-                            <p class="text-3xl font-bold text-gray-900">{{ $totalApplications }}</p>
-                        </div>
-                        <div class="p-6 bg-white shadow-lg rounded-xl flex flex-col justify-between min-h-[140px] border border-gray-100 hover:shadow-xl transition-shadow duration-200">
-                            <h2 class="text-lg font-semibold text-gray-600">Pending Payments</h2>
-                            <p class="text-3xl font-bold text-gray-900">{{ $pendingPayments }}</p>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">{{ $stat['title'] }}</h3>
+                            <p class="text-3xl font-bold {{ $stat['color'] }}">{{ $stat['value'] }}</p>
                         </div>
                     </div>
+                @endforeach
+            </div>
+
+            <!-- Job Status Distribution Chart -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Status Distribution</h2>
+                <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+                    <canvas id="jobStatusChart" class="w-full" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Job Applications -->
+            <div class="bg-white shadow-xl rounded-lg p-8 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Recent Job Applications</h3>
                 </div>
 
-                <!-- Job Status Distribution Chart -->
-                <div class="mb-10">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Status Distribution</h2>
-                    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-                        <canvas id="jobStatusChart" class="w-full" style="max-height: 300px;"></canvas>
-                    </div>
-                </div>
-
-                <!-- Recent Job Applications -->
-                <div class="mb-10">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Recent Job Applications</h2>
-                    <div class="overflow-x-auto rounded-xl shadow-md border border-gray-200">
-                        <table class="min-w-full bg-white">
-                            <thead class="bg-blue-500 text-white uppercase text-xs font-semibold">
-                                <tr>
-                                    <th class="py-3 px-6 text-left rounded-tl-xl">Job</th>
-                                    <th class="py-3 px-6 text-left">Applicant</th>
-                                    <th class="py-3 px-6 text-left">Status</th>
-                                    <th class="py-3 px-6 text-left rounded-tr-xl">Actions</th>
+                <div class="overflow-x-auto shadow-md border border-gray-200">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-blue-100 text-black uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="py-3 px-6 text-left">Job</th>
+                                <th class="py-3 px-6 text-left">Applicant</th>
+                                <th class="py-3 px-6 text-left">Status</th>
+                                <th class="py-3 px-6 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @forelse($jobApplications as $index => $application)
+                                <tr class="{{ $index % 2 === 0 ? 'bg-gray-50' : 'bg-white' }} hover:bg-teal-50 transition-colors duration-150">
+                                    <td class="py-4 px-6 text-gray-800 font-medium truncate max-w-xs">{{ $application->event->name }}</td>
+                                    <td class="py-4 px-6 text-gray-700 truncate max-w-xs">{{ $application->user->name }}</td>
+                                    <td class="py-4 px-6">
+                                        <span class="px-3 py-1 rounded-full text-xs font-medium
+                                            {{ $application->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : '' }}
+                                            {{ $application->status === 'approved' ? 'bg-green-100 text-green-800 border border-green-300' : '' }}
+                                            {{ $application->status === 'rejected' ? 'bg-red-100 text-red-800 border border-red-300' : '' }}
+                                            {{ $application->status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-300' : '' }}">
+                                            {{ ucfirst($application->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6">
+                                        <a href="{{ route('employer.jobs.applications', $application->event->id) }}"
+                                        class="text-teal-600 hover:text-teal-800 font-semibold text-sm transition duration-200">
+                                            View Details
+                                        </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                @forelse($jobApplications as $index => $application)
-                                    <tr class="{{ $index % 2 === 0 ? 'bg-gray-50' : 'bg-white' }} hover:bg-teal-50 transition-colors duration-150">
-                                        <td class="py-4 px-6 text-gray-800 font-medium truncate max-w-xs">{{ $application->event->name }}</td>
-                                        <td class="py-4 px-6 text-gray-700 truncate max-w-xs">{{ $application->user->name }}</td>
-                                        <td class="py-4 px-6">
-                                            <span class="px-3 py-1 rounded-full text-xs font-medium
-                                                {{ $application->status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' : '' }}
-                                                {{ $application->status === 'approved' ? 'bg-green-100 text-green-800 border border-green-300' : '' }}
-                                                {{ $application->status === 'rejected' ? 'bg-red-100 text-red-800 border border-red-300' : '' }}
-                                                {{ $application->status === 'completed' ? 'bg-blue-100 text-blue-800 border border-blue-300' : '' }}">
-                                                {{ ucfirst($application->status) }}
-                                            </span>
-                                        </td>
-                                        <td class="py-4 px-6">
-                                            <a href="{{ route('employer.jobs.applications', $application->event->id) }}"
-                                            class="text-teal-600 hover:text-teal-800 font-semibold text-sm transition duration-200">
-                                                View Details
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="bg-white">
-                                        <td colspan="4" class="py-4 px-6 text-center text-gray-500">No recent applications found.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                            @empty
+                                <tr class="bg-white">
+                                    <td colspan="4" class="py-4 px-6 text-center text-gray-500 rounded-bl-xl rounded-br-xl">
+                                        No recent applications found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
+            </div>
 
-               <!-- Job Calendar -->
-                <div class="mb-10">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Calendar</h2>
-                    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-                        <div id="calendar" class="w-full"></div>
-                    </div>
+
+            <!-- Job Calendar -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Job Calendar</h2>
+                <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+                    <div id="calendar" class="w-full"></div>
                 </div>
             </div>
         </div>

@@ -68,7 +68,7 @@
                         <label class="block text-gray-700 font-semibold">Date Range</label>
                         <input type="date" id="start-date" class="w-full p-2 border rounded-lg mb-2">
                         <input type="date" id="end-date" class="w-full p-2 border rounded-lg mb-5">
-                        <button type="button" id="clear-filters" class="bg-blue-600 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg w-full mb-2">
+                        <button type="button" id="clear-filters" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full mb-2">
                             Clear Filters
                         </button>
                     </div>
@@ -90,7 +90,8 @@
                                 data-start-date="{{ $event->start_date }}" 
                                 data-end-date="{{ $event->end_date }}"
                                 data-start-time="{{ $event->start_time }}"
-                                data-end-time="{{ $event->end_time }}">
+                                data-end-time="{{ $event->end_time }}"
+                                data-location="{{ $event->location}}">
                                 
                                 @php
                                     $photos = !empty($event->job_photos) ? json_decode($event->job_photos, true) : [];
@@ -136,10 +137,10 @@
                                         </div>
                                     </div>
                                 @else
-                                    <!-- Default Placeholder Image (Your PNG Photo) -->
+                                    <!-- Default Placeholder Image -->
                                     <img src="{{ asset('images/default-placeholder.png') }}" 
                                         alt="Default Placeholder" 
-                                        class="w-full h-full object-cover">
+                                        class="w-full h-48 object-cover">
                                 @endif
                                
                                 <!-- Event Details -->
@@ -163,7 +164,7 @@
 
                                 <!-- Button (Sticks to Bottom) -->
                                 <div class="mt-4">
-                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 w-full" onclick="openSidePanel({{ $event->id }})">
+                                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 w-full" onclick="openSidePanel({{ $event->id }})">
                                         View Details
                                     </button>
                                 </div>
@@ -306,9 +307,10 @@
                 const payment = parseFloat(card.getAttribute('data-payment'));
                 const eventStartDate = card.getAttribute('data-start-date');
                 const eventEndDate = card.getAttribute('data-end-date');
+                const location = card.getAttribute('data-location').toLowerCase();
 
                 // Check if the event name or job type match the search term
-                const matchesSearch = name.includes(searchTerm) || jobType.toLowerCase().includes(searchTerm);  // Check both name and job type
+                const matchesSearch = name.includes(searchTerm) || location.includes(searchTerm);  // Check both name and location
                 const matchesJobType = selectedJobType === '' || jobType === selectedJobType;  // Filter by selected job type
                 const matchesPayment = payment >= minPaymentValue && payment <= maxPaymentValue;
                 const matchesDate = (!startDateValue || eventStartDate >= startDateValue) && 

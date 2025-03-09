@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Report;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Notifications\NewReport;
 
 class ReportController extends Controller
 {
@@ -20,12 +22,17 @@ class ReportController extends Controller
             'message' => 'required|string',
         ]);
 
-        Report::create([
+        $report = Report::create([
             'user_id' => auth()->id(),
             'user_role' => auth()->user()->role,
             'subject' => $request->subject,
             'message' => $request->message,
         ]);
+
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewReport($report));
+        }
 
         if (Auth::user()->role === 'employer') {
             return redirect()->route('dashboard')->with('success', 'Report submitted successfully!');
@@ -45,4 +52,11 @@ class ReportController extends Controller
         $report->update(['status' => 'resolved']);
         return back()->with('success', 'Report marked as resolved.');
     }
+
+    public function view($id)
+    {
+        $report = Report::findOrFail($id);
+        return view('admin.reports.view', compact('report'));
+    }
+
 }

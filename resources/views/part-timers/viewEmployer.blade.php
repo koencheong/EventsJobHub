@@ -2,12 +2,6 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800"> {{ __('Employer Profile') }} </h2>
-            @if (Auth::check() && Auth::id() === $profile->user_id)
-            <a href="{{ route('employer.profile.edit') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
-                Edit Profile
-            </a>
-            @endif
         </div>
     </x-slot>
 
@@ -156,6 +150,22 @@
                         @endif
                     </div>
                 </div>
+
+				@php
+					$previousUrl = url()->previous();
+					$ratingsUrl = route('ratings.show', ['userId' => $profile->user_id]);
+					
+					// If coming from the ratings page, set a fallback to employer list
+					if ($previousUrl === $ratingsUrl) {
+						$previousUrl = route('part-timers.dashboard');
+					}
+				@endphp		
+				<div class="mt-6 text-center">
+					<a href="{{ $previousUrl }}"
+					class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto">
+						Back
+					</a>
+            	</div>
             </div>
         </div>
     </div>
