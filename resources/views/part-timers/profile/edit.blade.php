@@ -79,15 +79,14 @@
 
                     <!-- Buttons -->
                     <div class="mt-6 flex justify-between items-center gap-4">
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto">
-                            Save Changes
+                        <a href="{{ url()->previous() }}"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto text-center flex justify-center items-center">
+                            Back
+                        </a>
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto text-center">
+                            Save
                         </button>
-                        <div class="mt-6 text-center">
-                            <a href="{{ url()->previous() }}"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200 w-full sm:w-auto">
-                                Back to Profile
-                            </a>
-                        </div>
                     </div>
                 </form>
             </div>
