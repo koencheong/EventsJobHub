@@ -12,6 +12,7 @@
             <div class="mb-6 space-y-2 text-gray-700">
                 <p><strong>ID:</strong> {{ $report->id }}</p>
                 <p><strong>User:</strong> {{ $report->user->name }}</p>
+                <p><strong>Email:</strong> {{ $report->user->email }}</p>
                 <p><strong>Subject:</strong> {{ $report->subject }}</p>
                 <p><strong>Message:</strong> {{ $report->message }}</p>
                 <p><strong>Submitted At:</strong> {{ $report->created_at->format('d M Y, h:i A') }}</p>
@@ -27,11 +28,11 @@
 
             
             <!-- Message Employer (Right) -->
-            <a href="{{ url('/chatify/' . $report->user->id) }}" 
+            <!-- <a href="{{ url('/chatify/' . $report->user->id) }}" 
             class="w-40 px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                     hover:bg-blue-700 transition duration-300 ease-in-out text-center">
                 Send a Message
-            </a>
+            </a> -->
 
             <!-- Delete Report (Center) -->
             <button onclick="openModal('deleteReportModal')" 

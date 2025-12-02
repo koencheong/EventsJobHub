@@ -61,9 +61,9 @@
                             @endif
                         @endif
                         <!-- Open Chat Button -->
-                        <x-nav-link href="{{ route('chatify') }}" :active="request()->routeIs('chatify')">
+                        <!-- <x-nav-link href="{{ route('chatify') }}" :active="request()->routeIs('chatify')">
                             {{ __('Chat') }}
-                        </x-nav-link>
+                        </x-nav-link> -->
                         <!-- Notifications -->
                         <x-nav-link href="{{ route('notifications.index') }}" :active="request()->routeIs('notifications.index')">
                             <div class="relative flex items-center">
