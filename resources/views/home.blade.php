@@ -515,7 +515,7 @@
     </script>
 
     <!-- Google Maps Script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAS6LJUe32nG4zgJ8_FDo78Zd3w4Df8o80&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDjjO4wOmqmu5iS5MWFoaG-ZFZZGiWr88&callback=initMap" async defer></script>
     <script>
         let map;
 

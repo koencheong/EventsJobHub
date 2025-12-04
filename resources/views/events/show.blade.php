@@ -158,11 +158,11 @@
                         </a>
 
                         <!-- Message Employer Button -->
-                        <a href="{{ url('/chatify/' . $event->company_id) }}" 
+                        <!-- <a href="{{ url('/chatify/' . $event->company_id) }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                                 hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
                             ✉️ Send a Message
-                        </a>
+                        </a> -->
                     @elseif (auth()->user()->role === 'admin')
                         <a href="{{ route('admin.jobs') }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
@@ -170,11 +170,11 @@
                             Back
                         </a>
                         <!-- Message Employer Button -->
-                        <a href="{{ url('/chatify/' . $event->company_id) }}" 
+                        <!-- <a href="{{ url('/chatify/' . $event->company_id) }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                                 hover:bg-blue-700 transition duration-300 ease-in-out inline-block">
                             ✉️ Send a Message
-                        </a>
+                        </a> -->
                     @else
                         <a href="{{ route('dashboard') }}" 
                         class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
@@ -188,7 +188,7 @@
     </div>
 
     <!-- Google Maps Script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAS6LJUe32nG4zgJ8_FDo78Zd3w4Df8o80"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDjjO4wOmqmu5iS5MWFoaG-ZFZZGiWr88"></script>
     <script>
         let map;
 
