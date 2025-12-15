@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <!-- View Ratings Button -->
-                    <a href="{{ route('ratings.show', ['userId' => $profile->id]) }}" 
+                    <a href="{{ route('ratings.show', ['userId' => $profile->user_id]) }}" 
                        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
                         View Ratings
                     </a>
@@ -136,7 +136,7 @@
 
                 <!-- Back Button -->
                 <div class="mt-6 text-center">
-                    <a href="{{ route('part-timers.dashboard') }}"
+                    <a href="{{ url()->previous() }}"
                     class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-200">
                         Back
                     </a>

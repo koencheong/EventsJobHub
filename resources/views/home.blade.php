@@ -200,12 +200,12 @@
             <p id="sidePanelDescription" class="text-gray-600 mt-4"></p>    
             <!-- View Employer Button  -->
             <div class="flex justify-end mt-4">
-                <a href="{{ route('part-timers.viewEmployer', ['userId' => $event->company_id]) }}" 
+                <a href="#" id="viewEmployerLink" 
                     class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
                             hover:bg-blue-700 transition duration-300 ease-in-out inline-block whitespace-nowrap">
                     View Employer
                 </a>
-            </div>  
+            </div>
 
             <!-- Google Maps Section -->
             <div class="mt-6">
@@ -367,6 +367,7 @@
 
     <!-- JavaScript for Custom Modals and Application Logic -->
     <script>
+        const baseRoute = "{{ route('part-timers.viewEmployer', ['userId' => 'PLACEHOLDER']) }}";
         // Function to close the side panel
         function closeSidePanel() {
             document.getElementById('sidePanel').classList.add('translate-x-full');
@@ -388,6 +389,10 @@
         function openSidePanel(eventId) {
             const eventsArray = @json($events).data; // Fix: Access 'data' array
             const eventData = eventsArray.find(event => event.id === eventId);
+            const employerLink = document.getElementById('viewEmployerLink');
+
+            const finalUrl = baseRoute.replace('PLACEHOLDER', eventData.company_id);
+            employerLink.href = finalUrl;
 
             if (eventData) {
                 document.getElementById('sidePanelTitle').innerText = eventData.name;

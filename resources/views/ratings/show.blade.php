@@ -58,8 +58,25 @@
             @endif
 
             <div class="text-center mt-10">
-                <a href="{{ url()->previous() }}" 
-                   class="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+                @php
+                    // 1. Get the previous URL
+                    $previousUrl = url()->previous();
+                    // 2. Use the native PHP 8.0+ function str_contains() for reliability.
+                    // This checks if the previous page URL contains the segment '/admin'.
+                    $isAdmin = str_contains($previousUrl, '/admin');
+                    
+                    if ($isAdmin) {
+                        // Admin: Go back to the Admin's list of all employers (fixed route).
+                        $backRoute = route('admin.employers'); 
+                    } else {
+                        // Part-Timer: Go back to the Part-Timer's view of this specific employer 
+                        // using the ID available in the current ratings view ($user->id).
+                        $backRoute = route('part-timers.viewEmployer', ['userId' => $user->id]);
+                    }
+                @endphp
+
+                <a href="{{ $backRoute }}" 
+                class="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
                     Back
                 </a>
             </div>
