@@ -180,6 +180,7 @@
     <div id="sidePanel" class="fixed inset-y-0 right-0 w-[40rem] bg-white shadow-xl transform transition-transform duration-300 translate-x-full overflow-y-auto">
         <div class="p-7">
             <button type="button" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onclick="closeSidePanel()">&times;</button>
+            
             <h2 id="sidePanelTitle" class="text-2xl font-bold text-gray-800"></h2>
             <p id="sidePanelJobType" class="text-gray-600 mt-2"></p>
             <p id="sidePanelLocation" class="text-gray-600 mt-2">
@@ -195,7 +196,16 @@
             <p id="sidePanelPayment" class="text-gray-600 mt-2">
                 <i class="bi bi-currency-dollar text-green-600 mr-2"></i> <strong>Payment Rate:</strong> <span id="paymentText"></span>
             </p>
-            <p id="sidePanelDescription" class="text-gray-600 mt-4"></p>
+
+            <p id="sidePanelDescription" class="text-gray-600 mt-4"></p>    
+            <!-- View Employer Button  -->
+            <div class="flex justify-end mt-4">
+                <a href="{{ route('part-timers.viewEmployer', ['userId' => $event->company_id]) }}" 
+                    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+                            hover:bg-blue-700 transition duration-300 ease-in-out inline-block whitespace-nowrap">
+                    View Employer
+                </a>
+            </div>  
 
             <!-- Google Maps Section -->
             <div class="mt-6">
