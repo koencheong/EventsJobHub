@@ -19,7 +19,7 @@
 
         <!-- Website Name at Top Middle -->
         <div class="text-2xl font-bold text-white mb-4 z-10">
-            Event Jobs Hub
+            Events Job Hub
         </div>
 
         <!-- Main content box -->

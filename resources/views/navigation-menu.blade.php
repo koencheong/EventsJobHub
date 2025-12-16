@@ -5,7 +5,7 @@
             <div class="flex">
                 <div class="shrink-0 flex items-center">
                     <div class="text-2xl font-semibold text-blue-600">
-                        Event Jobs Hub 
+                        Events Job Hub 
                     </div>
                 </div>
 

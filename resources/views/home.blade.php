@@ -19,7 +19,7 @@
 
         <!-- Hero Content -->
         <div class="relative text-white px-4">
-            <h1 class="text-5xl font-bold mb-6">Welcome to Event Jobs Hub</h1>
+            <h1 class="text-5xl font-bold mb-6">Welcome to Events Job Hub</h1>
             <p class="text-lg max-w-2xl mx-auto mb-8">Find the perfect part-time event jobs with ease and start earning today!</p>
             <!-- Search Form -->
             <div class="flex bg-white rounded-full shadow-lg p-2 max-w-lg mx-auto">
