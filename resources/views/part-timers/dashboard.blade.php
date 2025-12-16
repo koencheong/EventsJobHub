@@ -170,10 +170,10 @@
                     </a>
 
                     <!-- Recommended Jobs (Right) -->
-                    <a href="{{ route('jobs.recommended') }}" 
+                    <!-- <a href="{{ route('jobs.recommended') }}" 
                     class="bg-green-500 text-white px-5 py-3 rounded-md text-sm font-semibold hover:bg-green-600 transition">
                         Recommended Jobs
-                    </a>
+                    </a> -->
                 </div>
             </div>
 
